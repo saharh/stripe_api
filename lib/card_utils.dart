@@ -1,3 +1,5 @@
+import 'package:stripe_api/model/model_utils.dart';
+
 import 'model/card.dart';
 import 'text_utils.dart';
 
@@ -21,8 +23,40 @@ const int MAX_LENGTH_AMEX_DINERS = 17;
  */
 bool isValidCardNumber(String cardNumber) {
   String normalizedNumber = removeSpacesAndHyphens(cardNumber);
-  return isValidLuhnNumber(normalizedNumber) &&
-      isValidCardLength(normalizedNumber);
+  return isValidLuhnNumber(normalizedNumber) && isValidCardLength(normalizedNumber);
+}
+
+bool isValidExpMonth(int expMonth) {
+  return expMonth != null && expMonth >= 1 && expMonth <= 12;
+}
+
+bool isValidExpYear(int expYear, {DateTime now}) {
+  now = now ?? DateTime.now();
+  return expYear != null && !ModelUtils.hasYearPassed(expYear, now);
+}
+
+bool isValidExpiryDate(int expYear, int expMonth, {DateTime now}) {
+  now = now ?? DateTime.now();
+  if (!isValidExpMonth(expMonth)) {
+    return false;
+  }
+  if (!isValidExpYear(expYear)) {
+    return false;
+  }
+  return !ModelUtils.hasMonthPassed(expYear, expMonth, now);
+}
+
+bool isValidCVC(String cvc, String brand) {
+  if (isBlank(cvc)) {
+    return false;
+  }
+  String cvcValue = cvc.trim();
+  String updatedType = brand;
+  bool validLength = (updatedType == null && cvcValue.length >= 3 && cvcValue.length <= 4) ||
+      (StripeCard.AMERICAN_EXPRESS == updatedType && cvcValue.length == 4) ||
+      cvcValue.length == 3;
+
+  return ModelUtils.isWholePositiveNumber(cvcValue) && validLength;
 }
 
 /**
@@ -105,13 +139,11 @@ String getPossibleCardType(String cardNumber, {bool shouldNormalize = true}) {
     return StripeCard.DISCOVER;
   } else if (hasAnyPrefix(spacelessCardNumber, StripeCard.PREFIXES_JCB)) {
     return StripeCard.JCB;
-  } else if (hasAnyPrefix(
-      spacelessCardNumber, StripeCard.PREFIXES_DINERS_CLUB)) {
+  } else if (hasAnyPrefix(spacelessCardNumber, StripeCard.PREFIXES_DINERS_CLUB)) {
     return StripeCard.DINERS_CLUB;
   } else if (hasAnyPrefix(spacelessCardNumber, StripeCard.PREFIXES_VISA)) {
     return StripeCard.VISA;
-  } else if (hasAnyPrefix(
-      spacelessCardNumber, StripeCard.PREFIXES_MASTERCARD)) {
+  } else if (hasAnyPrefix(spacelessCardNumber, StripeCard.PREFIXES_MASTERCARD)) {
     return StripeCard.MASTERCARD;
   } else if (hasAnyPrefix(spacelessCardNumber, StripeCard.PREFIXES_UNIONPAY)) {
     return StripeCard.UNIONPAY;
@@ -121,8 +153,7 @@ String getPossibleCardType(String cardNumber, {bool shouldNormalize = true}) {
 }
 
 int getLengthForBrand(String cardBrand) {
-  if (StripeCard.AMERICAN_EXPRESS == cardBrand ||
-      StripeCard.DINERS_CLUB == cardBrand) {
+  if (StripeCard.AMERICAN_EXPRESS == cardBrand || StripeCard.DINERS_CLUB == cardBrand) {
     return MAX_LENGTH_AMEX_DINERS;
   } else {
     return MAX_LENGTH_COMMON;
