@@ -22,7 +22,7 @@ class CardNumberFormatter extends TextInputFormatter {
     this.onCardNumberComplete,
     this.onShowError,
   }) {
-    _cardBrand = StripeCard.UNKNOWN;
+    _cardBrand = null;
   }
 
   @override

@@ -21,11 +21,13 @@ class _MyAppState extends State<MyApp> {
 
   final TextEditingController controller = new TextEditingController();
 
+  String brandName;
+
   @override
   void initState() {
     super.initState();
-
     Stripe.init('pk_test_your_stripe_key');
+    this.brandName = '';
   }
 
   @override
@@ -39,6 +41,7 @@ class _MyAppState extends State<MyApp> {
           alignment: Alignment.topCenter,
           child: new Column(
             children: <Widget>[
+              Text(brandName),
               new SizedBox(height: 12.0),
               new TextField(
                 controller: controller,
@@ -46,6 +49,9 @@ class _MyAppState extends State<MyApp> {
                   CardNumberFormatter(
                     onCardBrandChanged: (brand) {
                       print('onCardBrandChanged : ' + brand);
+                      setState(() {
+                        brandName = brand;
+                      });
                     },
                     onCardNumberComplete: (){
                       print('onCardNumberComplete');
