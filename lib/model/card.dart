@@ -182,7 +182,7 @@ class StripeCard extends StripeJsonModel implements StripePaymentSource {
 
   String get brand {
     if (isBlank(_brand) && !isBlank(number)) {
-      _brand = getPossibleCardType(number);
+      _brand = CardUtils.getPossibleCardType(number);
     }
 
     return _brand;
@@ -203,7 +203,7 @@ class StripeCard extends StripeJsonModel implements StripePaymentSource {
    * @return {@code true} if valid, {@code false} otherwise.
    */
   bool validateNumber() {
-    return isValidCardNumber(number);
+    return CardUtils.isValidCardNumber(number);
   }
 
   /**
@@ -213,7 +213,7 @@ class StripeCard extends StripeJsonModel implements StripePaymentSource {
    * @return {@code true} if valid, {@code false} otherwise
    */
   bool validateExpiryDate() {
-    return isValidExpiryDate(expYear, expMonth);
+    return CardUtils.isValidExpiryDate(expYear, expMonth);
   }
 
   /**
@@ -222,7 +222,7 @@ class StripeCard extends StripeJsonModel implements StripePaymentSource {
    * @return {@code true} if valid, {@code false} otherwise
    */
   bool validateCVC() {
-    return isValidCVC(cvc, brand);
+    return CardUtils.isValidCVC(cvc, brand);
   }
 
   /**
@@ -231,7 +231,7 @@ class StripeCard extends StripeJsonModel implements StripePaymentSource {
    * @return {@code true} if valid, {@code false} otherwise.
    */
   bool validateExpMonth() {
-    return isValidExpMonth(expMonth);
+    return CardUtils.isValidExpMonth(expMonth);
   }
 
   /**
@@ -240,7 +240,7 @@ class StripeCard extends StripeJsonModel implements StripePaymentSource {
    * @return {@code true} if valid, {@code false} otherwise.
    */
   bool validateExpYear(DateTime now) {
-    return isValidExpYear(expYear, now: now);
+    return CardUtils.isValidExpYear(expYear, now: now);
   }
 
   bool _validateCard(DateTime now) {

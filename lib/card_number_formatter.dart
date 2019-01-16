@@ -73,7 +73,7 @@ class CardNumberFormatter extends TextInputFormatter {
 
     if(computedValue.text.length == _lengthMax) {
       var before = _isCardNumberValid;
-      _isCardNumberValid = isValidCardNumber(computedValue.text);
+      _isCardNumberValid = CardUtils.isValidCardNumber(computedValue.text);
       if (onShowError != null) {
         onShowError(!_isCardNumberValid);
       }
@@ -82,7 +82,7 @@ class CardNumberFormatter extends TextInputFormatter {
       }
     } else {
       _isCardNumberValid =
-          computedValue.text != null && isValidCardNumber(computedValue.text);
+          computedValue.text != null && CardUtils.isValidCardNumber(computedValue.text);
       // Don't show errors if we aren't full-length.
       if (onShowError != null) {
         onShowError(false);
@@ -103,11 +103,11 @@ class CardNumberFormatter extends TextInputFormatter {
       onCardBrandChanged(brand);
     }
 
-    _lengthMax = getLengthForBrand(brand);
+    _lengthMax = CardUtils.getLengthForBrand(brand);
   }
 
   void _updateCardBrandFromNumber(String partialNumber) {
-    _updateCardBrand(getPossibleCardType(partialNumber));
+    _updateCardBrand(CardUtils.getPossibleCardType(partialNumber));
   }
 }
 
