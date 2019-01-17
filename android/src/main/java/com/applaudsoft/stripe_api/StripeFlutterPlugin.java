@@ -45,7 +45,7 @@ public class StripeFlutterPlugin implements MethodCallHandler {
         if (call.method.equals("init")) {
             String apiKey = call.arguments();
             stripe = new Stripe(registrar.activity(), apiKey);
-            Log.d("tag", "initialized Stripe successfully!");
+            Log.d("tag", "initialized Stripe successfully, with apiKey: " + apiKey);
             result.success(null);
         } else if (call.method.equals("createSource")) {
             Map<String, ?> cardMap = call.arguments();
@@ -62,7 +62,7 @@ public class StripeFlutterPlugin implements MethodCallHandler {
                     (String) cardMap.get("address_zip"),
                     (String) cardMap.get("address_country"),
                     null);
-            stripe.createSource(SourceParams.createCardParams(card), new SourceCallback() {
+            SourceCallback sourceCallback = new SourceCallback() {
                 @Override
                 public void onError(Exception error) {
                     result.error(error.getMessage(), null, null);
@@ -74,7 +74,8 @@ public class StripeFlutterPlugin implements MethodCallHandler {
                     removeNullAndEmptyParamsIncl(map);
                     result.success(map);
                 }
-            });
+            };
+            stripe.createSource(SourceParams.createCardParams(card), sourceCallback);
         } else {
             result.notImplemented();
         }
