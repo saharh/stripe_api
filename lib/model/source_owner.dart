@@ -34,7 +34,7 @@ class SourceOwner extends StripeJsonModel {
     this.verifiedPhone,
   });
 
-  SourceOwner.fromJson(Map<String, dynamic> json) {
+  SourceOwner.fromJson(Map<dynamic, dynamic> json) {
     var addressObject = json[FIELD_ADDRESS];
     if (addressObject != null) {
       address = Address.fromJson(addressObject);
@@ -55,7 +55,7 @@ class SourceOwner extends StripeJsonModel {
 
   @override
   Map<String, dynamic> toMap() {
-    Map<String, Object> hashMap = new Map();
+    Map<String, dynamic> hashMap = new Map();
     if (address != null) {
       hashMap[FIELD_ADDRESS] = address.toMap();
     }

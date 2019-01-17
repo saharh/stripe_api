@@ -3,7 +3,7 @@
  *
  * @param mapToEdit a {@link Map} from which to remove the keys that have {@code null} values
  */
-void removeNullAndEmptyParams(Map<String, Object> mapToEdit) {
+void removeNullAndEmptyParams(Map<dynamic, dynamic> mapToEdit) {
 // Remove all null values; they cause validation errors
   final keys = mapToEdit.keys.toList(growable: false);
   for (String key in keys) {

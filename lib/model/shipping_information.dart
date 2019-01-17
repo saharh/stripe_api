@@ -18,7 +18,7 @@ class ShippingInformation extends StripeJsonModel {
     this.phone,
   });
 
-  ShippingInformation.fromJson(Map<String, dynamic> json) {
+  ShippingInformation.fromJson(Map<dynamic, dynamic> json) {
     name = optString(json, FIELD_NAME);
     phone = optString(json, FIELD_PHONE);
     var addr = json[FIELD_ADDRESS];
@@ -29,7 +29,7 @@ class ShippingInformation extends StripeJsonModel {
 
   @override
   Map<String, dynamic> toMap() {
-    Map<String, Object> map = new Map();
+    Map<String, dynamic> map = new Map();
     map[FIELD_NAME] = name;
     map[FIELD_PHONE] = phone;
     StripeJsonModel.putStripeJsonModelMapIfNotNull(map, FIELD_ADDRESS, address);

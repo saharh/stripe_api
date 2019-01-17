@@ -26,7 +26,7 @@ class Address extends StripeJsonModel {
     this.state,
   });
 
-  Address.fromJson(Map<String, dynamic> json) {
+  Address.fromJson(Map<dynamic, dynamic> json) {
     city = json[FIELD_CITY];
     country = json[FIELD_COUNTRY];
     line1 = json[FIELD_LINE_1];
@@ -37,7 +37,7 @@ class Address extends StripeJsonModel {
 
   @override
   Map<String, dynamic> toMap() {
-    Map<String, Object> hashMap = new Map();
+    Map<String, dynamic> hashMap = new Map();
     hashMap[FIELD_CITY] = city;
     hashMap[FIELD_COUNTRY] = country;
     hashMap[FIELD_LINE_1] = line1;

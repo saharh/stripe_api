@@ -31,7 +31,7 @@ class Customer extends StripeJsonModel {
   int totalCount;
   String url;
 
-  Customer.fromJson(Map<String, dynamic> json) {
+  Customer.fromJson(Map<dynamic, dynamic> json) {
     id = optString(json, FIELD_ID);
     defaultSource = optString(json, FIELD_DEFAULT_SOURCE);
     final shipInfoObject = json[FIELD_SHIPPING]; //.cast<String, dynamic>()
@@ -69,7 +69,7 @@ class Customer extends StripeJsonModel {
 
   @override
   Map<String, dynamic> toMap() {
-    Map<String, Object> mapObject = new Map();
+    Map<String, dynamic> mapObject = new Map();
     mapObject[FIELD_ID] = id;
     mapObject[FIELD_OBJECT] = VALUE_CUSTOMER;
     mapObject[FIELD_DEFAULT_SOURCE] = defaultSource;
@@ -77,7 +77,7 @@ class Customer extends StripeJsonModel {
     StripeJsonModel.putStripeJsonModelMapIfNotNull(
         mapObject, FIELD_SHIPPING, shippingInformation);
 
-    Map<String, Object> sourcesObject = new Map();
+    Map<String, dynamic> sourcesObject = new Map();
     sourcesObject[FIELD_HAS_MORE] = hasMore;
     sourcesObject[FIELD_TOTAL_COUNT] = totalCount;
     sourcesObject[FIELD_OBJECT] = VALUE_LIST;

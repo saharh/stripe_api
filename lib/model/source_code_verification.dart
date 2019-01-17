@@ -14,7 +14,7 @@ class SourceCodeVerification extends StripeJsonModel {
 
   SourceCodeVerification(this.attemptsRemaining, this.status);
 
-  SourceCodeVerification.fromJson(Map<String, dynamic> json) {
+  SourceCodeVerification.fromJson(Map<dynamic, dynamic> json) {
     attemptsRemaining =
         json['FIELD_ATTEMPTS_REMAINING'] ?? INVALID_ATTEMPTS_REMAINING;
     status = _asStatus(json['FIELD_STATUS']);
@@ -22,7 +22,7 @@ class SourceCodeVerification extends StripeJsonModel {
 
   @override
   Map<String, dynamic> toMap() {
-    Map<String, Object> hashMap = new Map();
+    Map<String, dynamic> hashMap = new Map();
     hashMap[FIELD_ATTEMPTS_REMAINING] = attemptsRemaining;
     if (status != null) {
       hashMap[FIELD_STATUS] = status;

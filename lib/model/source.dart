@@ -1,3 +1,5 @@
+import 'package:stripe_api/model/source_card_data.dart';
+
 import 'source_code_verification.dart';
 import 'source_owner.dart';
 import 'source_receiver.dart';
@@ -77,7 +79,7 @@ class Source extends StripeJsonModel implements StripePaymentSource {
   SourceReceiver receiver;
   SourceRedirect redirect;
   String status;
-  Map<String, Object> sourceTypeData;
+  Map<dynamic, dynamic> sourceTypeData;
   StripeSourceTypeModel sourceTypeModel;
   String type;
   String usage;
@@ -145,7 +147,7 @@ class Source extends StripeJsonModel implements StripePaymentSource {
 
     status = asSourceStatus(optString(json, FIELD_STATUS));
 
-    String typeRaw = optString(json, FIELD_TYPE);
+    typeRaw = optString(json, FIELD_TYPE);
     if (typeRaw == null) {
       // We can't allow this type to be null, as we are using it for a key
       // on the JSON object later.
@@ -160,19 +162,23 @@ class Source extends StripeJsonModel implements StripePaymentSource {
     // Until we have models for all types, keep the original hash and the
     // model object. The customType variable can be any field, and is not altered by
     // trying to force it to be a type that we know of.
-    /*
+
+//    sourceTypeData = json[typeRaw];
+//    if (MODELED_TYPES.contains(typeRaw)) {
+//      sourceTypeModel = new StripeSourceTypeModel(json[typeRaw]);
+//    }
     sourceTypeData = json[typeRaw];
-    if (MODELED_TYPES.contains(typeRaw)) {
-      sourceTypeModel = new StripeSourceTypeModel(json[typeRaw]);
+    if (typeRaw == CARD) {
+      sourceTypeModel = SourceCardData.fromJson(json[typeRaw]);
     }
-    */
+
 
     usage = asUsage(optString(json, FIELD_USAGE));
   }
 
   @override
   Map<String, dynamic> toMap() {
-    Map<String, Object> hashMap = new Map();
+    Map<String, dynamic> hashMap = new Map();
     hashMap[FIELD_ID] = id;
     hashMap[FIELD_AMOUNT] = amount;
     hashMap[FIELD_CLIENT_SECRET] = clientSecret;

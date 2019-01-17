@@ -1,5 +1,8 @@
+import 'package:stripe_api/card_utils.dart';
+
 import 'stripe_source_type_model.dart';
 import '../stripe_network_utils.dart';
+import 'stripe_json_utils.dart';
 
 class SourceCardData extends StripeSourceTypeModel {
   static const String REQUIRED = "required";
@@ -35,7 +38,7 @@ class SourceCardData extends StripeSourceTypeModel {
 
   @override
   Map<String, dynamic> toMap() {
-    Map<String, Object> objectMap = new Map();
+    Map<String, dynamic> objectMap = new Map();
     objectMap[FIELD_ADDRESS_LINE1_CHECK] = addressLine1Check;
     objectMap[FIELD_ADDRESS_ZIP_CHECK] = addressZipCheck;
     objectMap[FIELD_BRAND] = brand;
@@ -48,9 +51,23 @@ class SourceCardData extends StripeSourceTypeModel {
     objectMap[FIELD_THREE_D_SECURE] = threeDSecureStatus;
     objectMap[FIELD_TOKENIZATION_METHOD] = tokenizationMethod;
 
-    StripeSourceTypeModel.putAdditionalFieldsIntoMap(
-        objectMap, additionalFields);
+    StripeSourceTypeModel.putAdditionalFieldsIntoMap(objectMap, additionalFields);
     removeNullAndEmptyParams(objectMap);
     return objectMap;
+  }
+
+  SourceCardData.fromJson(Map<dynamic, dynamic> json) {
+    addressLine1Check = optString(json, FIELD_ADDRESS_LINE1_CHECK);
+    addressZipCheck = optString(json, FIELD_ADDRESS_ZIP_CHECK);
+    brand = CardUtils.asCardBrand(optString(json, FIELD_BRAND));
+    country = optCountryCode(json, FIELD_COUNTRY);
+    cvcCheck = optString(json, FIELD_CVC_CHECK);
+    dynamicLast4 = optString(json, FIELD_DYNAMIC_LAST4);
+    expiryMonth = optInteger(json, FIELD_EXP_MONTH);
+    expiryYear = optInteger(json, FIELD_EXP_YEAR);
+    funding = CardUtils.asFundingType(optString(json, FIELD_FUNDING));
+    last4 = optString(json, FIELD_LAST4);
+    threeDSecureStatus = optString(json, FIELD_THREE_D_SECURE);
+    tokenizationMethod = optString(json, FIELD_TOKENIZATION_METHOD);
   }
 }

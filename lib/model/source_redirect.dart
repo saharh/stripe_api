@@ -20,7 +20,7 @@ class SourceRedirect extends StripeJsonModel {
     this.url,
   });
 
-  SourceRedirect.fromJson(Map<String, dynamic> json) {
+  SourceRedirect.fromJson(Map<dynamic, dynamic> json) {
     returnUrl = json[FIELD_RETURN_URL];
     status = json[FIELD_STATUS];
     url = json[FIELD_URL];
@@ -28,7 +28,7 @@ class SourceRedirect extends StripeJsonModel {
 
   @override
   Map<String, dynamic> toMap() {
-    Map<String, Object> hashMap = new Map();
+    Map<String, dynamic> hashMap = new Map();
     hashMap[FIELD_RETURN_URL] = returnUrl;
     hashMap[FIELD_STATUS] = status;
     hashMap[FIELD_URL] = url;

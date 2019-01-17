@@ -37,7 +37,7 @@ class EphemeralKey extends StripeJsonModel {
   DateTime _createdAt;
   DateTime _expiresAt;
 
-  EphemeralKey.fromJson(Map<String, dynamic> json) {
+  EphemeralKey.fromJson(Map<dynamic, dynamic> json) {
     _id = optString(json, FIELD_ID);
     _created = optInteger(json, FIELD_CREATED);
     _expires = optInteger(json, FIELD_EXPIRES);

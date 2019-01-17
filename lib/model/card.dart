@@ -152,7 +152,7 @@ class StripeCard extends StripeJsonModel implements StripePaymentSource {
     this.tokenizationMethod,
   }) : _brand = brand;
 
-  StripeCard.fromJson(Map<String, dynamic> json) {
+  StripeCard.fromJson(Map<dynamic, dynamic> json) {
     // Note that we'll never get the CVC or card number in JSON, so those values are null
     number = optString(json, FIELD_NUMBER);
     cvc = optString(json, FIELD_CVC);
@@ -167,12 +167,12 @@ class StripeCard extends StripeJsonModel implements StripePaymentSource {
     addressState = optString(json, FIELD_ADDRESS_STATE);
     addressZip = optString(json, FIELD_ADDRESS_ZIP);
     addressZipCheck = optString(json, FIELD_ADDRESS_ZIP_CHECK);
-    _brand = asCardBrand(optString(json, FIELD_BRAND));
+    _brand = CardUtils.asCardBrand(optString(json, FIELD_BRAND));
     country = optCountryCode(json, FIELD_COUNTRY);
     customerId = optString(json, FIELD_CUSTOMER);
     currency = optCurrency(json, FIELD_CURRENCY);
     cvcCheck = optString(json, FIELD_CVC_CHECK);
-    funding = asFundingType(optString(json, FIELD_FUNDING));
+    funding = CardUtils.asFundingType(optString(json, FIELD_FUNDING));
     fingerprint = optString(json, FIELD_FINGERPRINT);
     id = optString(json, FIELD_ID);
     last4 = optString(json, FIELD_LAST4);
@@ -292,55 +292,5 @@ class StripeCard extends StripeJsonModel implements StripePaymentSource {
     return map;
   }
 
-  /**
-   * Converts an unchecked String value to a {@link CardBrand} or {@code null}.
-   *
-   * @param possibleCardType a String that might match a {@link CardBrand} or be empty.
-   * @return {@code null} if the input is blank, else the appropriate {@link CardBrand}.
-   */
-  static String asCardBrand(String possibleCardType) {
-    if (possibleCardType == null || possibleCardType.trim().isEmpty) {
-      return null;
-    }
 
-    if (StripeCard.AMERICAN_EXPRESS == possibleCardType) {
-      return StripeCard.AMERICAN_EXPRESS;
-    } else if (StripeCard.MASTERCARD == possibleCardType) {
-      return StripeCard.MASTERCARD;
-    } else if (StripeCard.DINERS_CLUB == possibleCardType) {
-      return StripeCard.DINERS_CLUB;
-    } else if (StripeCard.DISCOVER == possibleCardType) {
-      return StripeCard.DISCOVER;
-    } else if (StripeCard.JCB == possibleCardType) {
-      return StripeCard.JCB;
-    } else if (StripeCard.VISA == possibleCardType) {
-      return StripeCard.VISA;
-    } else if (StripeCard.UNIONPAY == possibleCardType) {
-      return StripeCard.UNIONPAY;
-    } else {
-      return StripeCard.UNKNOWN;
-    }
-  }
-
-  /**
-   * Converts an unchecked String value to a {@link FundingType} or {@code null}.
-   *
-   * @param possibleFundingType a String that might match a {@link FundingType} or be empty
-   * @return {@code null} if the input is blank, else the appropriate {@link FundingType}
-   */
-  static String asFundingType(String possibleFundingType) {
-    if (possibleFundingType == null || possibleFundingType.trim().isEmpty) {
-      return null;
-    }
-
-    if (StripeCard.FUNDING_CREDIT == possibleFundingType) {
-      return StripeCard.FUNDING_CREDIT;
-    } else if (StripeCard.FUNDING_DEBIT == possibleFundingType) {
-      return StripeCard.FUNDING_DEBIT;
-    } else if (StripeCard.FUNDING_PREPAID == possibleFundingType) {
-      return StripeCard.FUNDING_PREPAID;
-    } else {
-      return StripeCard.FUNDING_UNKNOWN;
-    }
-  }
 }

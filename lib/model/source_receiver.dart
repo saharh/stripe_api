@@ -20,7 +20,7 @@ class SourceReceiver extends StripeJsonModel {
     this.amountReturned,
   });
 
-  SourceReceiver.fromJson(Map<String, dynamic> json) {
+  SourceReceiver.fromJson(Map<dynamic, dynamic> json) {
     address = json[FIELD_ADDRESS];
     amountCharged = json[FIELD_AMOUNT_CHARGED];
     amountReceived = json[FIELD_AMOUNT_RECEIVED];
@@ -29,7 +29,7 @@ class SourceReceiver extends StripeJsonModel {
 
   @override
   Map<String, dynamic> toMap() {
-    Map<String, Object> hashMap = new Map();
+    Map<String, dynamic> hashMap = new Map();
 
     hashMap[FIELD_ADDRESS] = address;
     hashMap[FIELD_AMOUNT_CHARGED] = amountCharged;

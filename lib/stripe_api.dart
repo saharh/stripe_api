@@ -31,7 +31,8 @@ class StripeFlutterPlugin {
   static Future<Source> createSource(StripeCard card) async {
     final Map<String, dynamic> cardMap = card.toMap();
     Map<dynamic, dynamic> sourceMap = await _channel.invokeMethod('createSource', cardMap);
-    return Source.fromJson(sourceMap);
+    Source source = Source.fromJson(sourceMap);
+    return source;
   }
 }
 

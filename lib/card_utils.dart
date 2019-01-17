@@ -165,4 +165,56 @@ class CardUtils {
       return MAX_LENGTH_COMMON;
     }
   }
+
+  /**
+   * Converts an unchecked String value to a {@link CardBrand} or {@code null}.
+   *
+   * @param possibleCardType a String that might match a {@link CardBrand} or be empty.
+   * @return {@code null} if the input is blank, else the appropriate {@link CardBrand}.
+   */
+  static String asCardBrand(String possibleCardType) {
+    if (possibleCardType == null || possibleCardType.trim().isEmpty) {
+      return null;
+    }
+
+    if (StripeCard.AMERICAN_EXPRESS == possibleCardType) {
+      return StripeCard.AMERICAN_EXPRESS;
+    } else if (StripeCard.MASTERCARD == possibleCardType) {
+      return StripeCard.MASTERCARD;
+    } else if (StripeCard.DINERS_CLUB == possibleCardType) {
+      return StripeCard.DINERS_CLUB;
+    } else if (StripeCard.DISCOVER == possibleCardType) {
+      return StripeCard.DISCOVER;
+    } else if (StripeCard.JCB == possibleCardType) {
+      return StripeCard.JCB;
+    } else if (StripeCard.VISA == possibleCardType) {
+      return StripeCard.VISA;
+    } else if (StripeCard.UNIONPAY == possibleCardType) {
+      return StripeCard.UNIONPAY;
+    } else {
+      return StripeCard.UNKNOWN;
+    }
+  }
+
+  /**
+   * Converts an unchecked String value to a {@link FundingType} or {@code null}.
+   *
+   * @param possibleFundingType a String that might match a {@link FundingType} or be empty
+   * @return {@code null} if the input is blank, else the appropriate {@link FundingType}
+   */
+  static String asFundingType(String possibleFundingType) {
+    if (possibleFundingType == null || possibleFundingType.trim().isEmpty) {
+      return null;
+    }
+
+    if (StripeCard.FUNDING_CREDIT == possibleFundingType) {
+      return StripeCard.FUNDING_CREDIT;
+    } else if (StripeCard.FUNDING_DEBIT == possibleFundingType) {
+      return StripeCard.FUNDING_DEBIT;
+    } else if (StripeCard.FUNDING_PREPAID == possibleFundingType) {
+      return StripeCard.FUNDING_PREPAID;
+    } else {
+      return StripeCard.FUNDING_UNKNOWN;
+    }
+  }
 }
