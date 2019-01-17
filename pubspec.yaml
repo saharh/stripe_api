@@ -22,6 +22,9 @@ dev_dependencies:
 
 # The following section is specific to Flutter.
 flutter:
+  plugin:
+    androidPackage: com.applaudsoft.stripe_api
+    pluginClass: StripeFlutterPlugin
 
   # To add assets to your package, add an assets section, like this:
   # assets:

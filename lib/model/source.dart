@@ -103,7 +103,7 @@ class Source extends StripeJsonModel implements StripePaymentSource {
     this.usage,
   });
 
-  Source.fromJson(Map<String, dynamic> json) {
+  Source.fromJson(Map<dynamic, dynamic> json) {
     id = optString(json, FIELD_ID);
     amount = optInteger(json, FIELD_AMOUNT);
     clientSecret = optString(json, FIELD_CLIENT_SECRET);

@@ -26,7 +26,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    Stripe.init('pk_test_your_stripe_key');
+    Stripe.init('pk_test_oPkqhExHOa16kgTdguOv5xpS');
     this.brandName = '';
   }
 
@@ -81,6 +81,8 @@ class _MyAppState extends State<MyApp> {
               new SizedBox(height: 12.0),
               new FlatButton(
                   onPressed: _deleteCard, child: new Text('Delete Card')),
+              new FlatButton(
+                  onPressed: _createSource, child: new Text('Create Source')),
               new SizedBox(height: 12.0),
             ],
           ),
@@ -186,6 +188,19 @@ class _MyAppState extends State<MyApp> {
     print(headers.toString());
 
     return headers;
+  }
+
+  void _createSource() {
+    StripeCard card = new StripeCard(
+        number: '4242 4242 4242 4242', cvc: '713', expMonth: 5, expYear: 2019);
+    card.name = 'Jhonny Bravo';
+    Stripe.instance.createCardSource(card).then((source) {
+      print('done, source: ' + source.toString());
+    }).then((source) {
+      print(source);
+    }).catchError((error) {
+      print(error);
+    });
   }
 }
 

@@ -10,7 +10,7 @@ const String NULL = "null";
  * @param fieldName the optional field name
  * @return the value stored in the field, or {@code null} if the field isn't present
  */
-String optString(Map<String, dynamic> json, String fieldName) {
+String optString(Map<dynamic, dynamic> json, String fieldName) {
   return nullIfNullOrEmpty(json[fieldName] ?? "");
 }
 
@@ -22,7 +22,7 @@ String optString(Map<String, dynamic> json, String fieldName) {
  * @param fieldName the required field name
  * @return the value stored in the requested field, or {@code null} if the key is not present
  */
-bool optBoolean(Map<String, dynamic> json, String fieldName) {
+bool optBoolean(Map<dynamic, dynamic> json, String fieldName) {
   return json[fieldName] ?? false;
 }
 
@@ -34,7 +34,7 @@ bool optBoolean(Map<String, dynamic> json, String fieldName) {
  * @param fieldName the required field name
  * @return the value stored in the requested field, or {@code null} if the key is not present
  */
-int optInteger(Map<String, dynamic> json, String fieldName) {
+int optInteger(Map<dynamic, dynamic> json, String fieldName) {
   return json[fieldName] ?? 0;
 }
 
@@ -46,7 +46,7 @@ int optInteger(Map<String, dynamic> json, String fieldName) {
  * @param fieldName the name of the field in which the country code is stored
  * @return a two-letter country code if one is found, or {@code null}
  */
-String optCountryCode(Map<String, dynamic> json, String fieldName) {
+String optCountryCode(Map<dynamic, dynamic> json, String fieldName) {
   String value = optString(json, fieldName);
   if (value != null && value.length == 2) {
     return value;
@@ -63,7 +63,7 @@ String optCountryCode(Map<String, dynamic> json, String fieldName) {
  * @return a three-letter currency code if one is found, or {@code null}
  */
 
-String optCurrency(Map<String, dynamic> json, String fieldName) {
+String optCurrency(Map<dynamic, dynamic> json, String fieldName) {
   String value = optString(json, fieldName);
   if (value != null && value.length == 3) {
     return value;

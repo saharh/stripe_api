@@ -2,6 +2,8 @@ library flutter_stripe;
 
 import 'dart:async';
 
+import 'package:flutter/services.dart';
+
 import 'ephemeral_key_manager.dart';
 import 'model/card.dart';
 import 'model/customer.dart';
@@ -18,6 +20,21 @@ export 'model/shipping_information.dart';
 export 'model/source.dart';
 export 'model/token.dart';
 
+class StripeFlutterPlugin {
+  static const MethodChannel _channel = const MethodChannel('stripe_api');
+
+  static Future<void> init(String apiKey) async {
+    await _channel.invokeMethod('init', apiKey);
+    return;
+  }
+
+  static Future<Source> createSource(StripeCard card) async {
+    final Map<String, dynamic> cardMap = card.toMap();
+    Map<dynamic, dynamic> sourceMap = await _channel.invokeMethod('createSource', cardMap);
+    return Source.fromJson(sourceMap);
+  }
+}
+
 class Stripe {
   static Stripe _instance;
 
@@ -28,25 +45,28 @@ class Stripe {
 
   Stripe._internal(this.publishableKey);
 
-  static void init(String publishableKey) {
+  static void init(String publishableKey) async {
     if (_instance == null) {
       _validateKey(publishableKey);
       _instance = new Stripe._internal(publishableKey);
+      await _instance.initStripe();
     }
   }
 
   static Stripe get instance {
     if (_instance == null) {
-      throw new Exception(
-          "Attempted to get instance of Stripe without initialization");
+      throw new Exception("Attempted to get instance of Stripe without initialization");
     }
     return _instance;
   }
 
+  Future<Source> createCardSource(StripeCard card) async {
+    return await StripeFlutterPlugin.createSource(card);
+  }
+
   Future<Token> createCardToken(StripeCard card) async {
     final cardMap = card.toMap();
-    final token = await _apiHandler.createToken(
-        <String, dynamic>{Token.TYPE_CARD: cardMap}, publishableKey);
+    final token = await _apiHandler.createToken(<String, dynamic>{Token.TYPE_CARD: cardMap}, publishableKey);
     return token;
   }
 
@@ -68,6 +88,10 @@ class Stripe {
           "see https://stripe.com/docs/stripe.js");
     }
   }
+
+  Future initStripe() async {
+    StripeFlutterPlugin.init(this.publishableKey);
+  }
 }
 
 class CustomerSession {
@@ -87,8 +111,7 @@ class CustomerSession {
   ///
   static void initCustomerSession(EphemeralKeyProvider provider) {
     if (_instance == null) {
-      final manager =
-          new EphemeralKeyManager(provider, KEY_REFRESH_BUFFER_IN_SECONDS);
+      final manager = new EphemeralKeyManager(provider, KEY_REFRESH_BUFFER_IN_SECONDS);
       _instance = new CustomerSession._internal(manager);
     }
   }
@@ -105,8 +128,7 @@ class CustomerSession {
   ///
   static CustomerSession get instance {
     if (_instance == null) {
-      throw new Exception(
-          "Attempted to get instance of CustomerSession without initialization.");
+      throw new Exception("Attempted to get instance of CustomerSession without initialization.");
     }
     return _instance;
   }
@@ -116,8 +138,7 @@ class CustomerSession {
   ///
   Future<Customer> retrieveCurrentCustomer() async {
     final key = await _keyManager.retrieveEphemeralKey();
-    final customer =
-        await _apiHandler.retrieveCustomer(key.customerId, key.secret);
+    final customer = await _apiHandler.retrieveCustomer(key.customerId, key.secret);
     return customer;
   }
 
@@ -126,8 +147,7 @@ class CustomerSession {
   ///
   Future<Source> addCustomerSource(String sourceId) async {
     final key = await _keyManager.retrieveEphemeralKey();
-    final source = await _apiHandler.addCustomerSource(
-        key.customerId, sourceId, key.secret);
+    final source = await _apiHandler.addCustomerSource(key.customerId, sourceId, key.secret);
     return source;
   }
 
@@ -136,8 +156,7 @@ class CustomerSession {
   ///
   Future<bool> deleteCustomerSource(String sourceId) async {
     final key = await _keyManager.retrieveEphemeralKey();
-    final deleted = await _apiHandler.deleteCustomerSource(
-        key.customerId, sourceId, key.secret);
+    final deleted = await _apiHandler.deleteCustomerSource(key.customerId, sourceId, key.secret);
     return deleted;
   }
 
@@ -146,19 +165,16 @@ class CustomerSession {
   ///
   Future<Customer> updateCustomerDefaultSource(String sourceId) async {
     final key = await _keyManager.retrieveEphemeralKey();
-    final customer = await _apiHandler.updateCustomerDefaultSource(
-        key.customerId, sourceId, key.secret);
+    final customer = await _apiHandler.updateCustomerDefaultSource(key.customerId, sourceId, key.secret);
     return customer;
   }
 
   ///
   ///
   ///
-  Future<Customer> updateCustomerShippingInformation(
-      ShippingInformation shippingInfo) async {
+  Future<Customer> updateCustomerShippingInformation(ShippingInformation shippingInfo) async {
     final key = await _keyManager.retrieveEphemeralKey();
-    final customer = await _apiHandler.updateCustomerShippingInformation(
-        key.customerId, shippingInfo, key.secret);
+    final customer = await _apiHandler.updateCustomerShippingInformation(key.customerId, shippingInfo, key.secret);
     return customer;
   }
 }
