@@ -27,6 +27,7 @@ import io.flutter.plugin.common.PluginRegistry.Registrar;
 public class StripeFlutterPlugin implements MethodCallHandler {
     private Stripe stripe;
     Registrar registrar;
+    SourceCallback sourceCallback;
 
     public StripeFlutterPlugin(Registrar registrar) {
         this.registrar = registrar;
@@ -62,10 +63,11 @@ public class StripeFlutterPlugin implements MethodCallHandler {
                     (String) cardMap.get("address_zip"),
                     (String) cardMap.get("address_country"),
                     null);
-            SourceCallback sourceCallback = new SourceCallback() {
+            sourceCallback = new SourceCallback() {
                 @Override
-                public void onError(Exception error) {
-                    result.error(error.getMessage(), null, null);
+                public void onError(Exception e) {
+                    String message = e.getMessage() != null ? e.getMessage() : e.toString();
+                    result.error(message, null, null);
                 }
 
                 @Override
