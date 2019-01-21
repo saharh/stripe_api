@@ -83,6 +83,8 @@ class _MyAppState extends State<MyApp> {
                   onPressed: _deleteCard, child: new Text('Delete Card')),
               new FlatButton(
                   onPressed: _createSource, child: new Text('Create Source')),
+              new FlatButton(
+                  onPressed: _googlePay, child: new Text('Google Pay')),
               new SizedBox(height: 12.0),
             ],
           ),
@@ -201,6 +203,16 @@ class _MyAppState extends State<MyApp> {
     }).catchError((error) {
       print(error);
     });
+  }
+
+  void _googlePay() async{
+    bool googlePayAvailable = await Stripe.instance.isGooglePayAvailable();
+    if (!googlePayAvailable) {
+      print('GPAY not available!');
+      return;
+    }
+    Map map = await Stripe.instance.cardFromGooglePay();
+    print('Result: $map');
   }
 }
 

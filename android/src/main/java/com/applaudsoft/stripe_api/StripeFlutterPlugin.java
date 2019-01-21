@@ -41,6 +41,7 @@ public class StripeFlutterPlugin implements MethodCallHandler {
     public static void registerWith(Registrar registrar) {
         final MethodChannel channel = new MethodChannel(registrar.messenger(), "stripe_api");
         GooglePayDelegate gpayDelegate = new GooglePayDelegate(registrar.activity());
+        registrar.addActivityResultListener(gpayDelegate);
         channel.setMethodCallHandler(new StripeFlutterPlugin(registrar, gpayDelegate));
     }
 

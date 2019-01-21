@@ -3,6 +3,7 @@ package com.applaudsoft.stripe_api;
 import android.app.Activity;
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.Status;
@@ -54,6 +55,7 @@ public class GooglePayDelegate implements PluginRegistry.ActivityResultListener 
 
     @Override
     public boolean onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.d("tag", "onActivityResult, requestCode: " + requestCode + ", resultCode: " + resultCode + ", data: " + data);
         switch (requestCode) {
             case LOAD_PAYMENT_DATA_REQUEST_CODE:
                 switch (resultCode) {
