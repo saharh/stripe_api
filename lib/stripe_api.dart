@@ -34,6 +34,17 @@ class StripeFlutterPlugin {
     Source source = Source.fromJson(sourceMap);
     return source;
   }
+
+  static Future<bool> isGooglePayAvailable() async {
+    return await _channel.invokeMethod('isGooglePayAvailable');
+  }
+  static Future<Map> cardFromGooglePay() async {
+    Map<dynamic, dynamic> map =  await _channel.invokeMethod('cardFromGooglePay');
+    var cardMap = map["card"];
+    map["card"] = StripeCard.fromJson(cardMap);
+    return map;
+  }
+
 }
 
 class Stripe {
@@ -69,6 +80,14 @@ class Stripe {
     final cardMap = card.toMap();
     final token = await _apiHandler.createToken(<String, dynamic>{Token.TYPE_CARD: cardMap}, publishableKey);
     return token;
+  }
+
+  static Future<bool> isGooglePayAvailable() async {
+    return await StripeFlutterPlugin.isGooglePayAvailable();
+  }
+
+  static Future<Map> cardFromGooglePay() async {
+    return await StripeFlutterPlugin.cardFromGooglePay();
   }
 
   Future<Token> createBankAccountToken(StripeCard card) async {

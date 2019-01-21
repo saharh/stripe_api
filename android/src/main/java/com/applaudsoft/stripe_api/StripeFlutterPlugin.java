@@ -2,7 +2,6 @@ package com.applaudsoft.stripe_api;
 
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.stripe.android.SourceCallback;
 import com.stripe.android.Stripe;
@@ -28,9 +27,12 @@ public class StripeFlutterPlugin implements MethodCallHandler {
     private Stripe stripe;
     Registrar registrar;
     SourceCallback sourceCallback;
+    private GooglePayDelegate gpayDelegate;
 
-    public StripeFlutterPlugin(Registrar registrar) {
+
+    public StripeFlutterPlugin(Registrar registrar, GooglePayDelegate gpayDelegate) {
         this.registrar = registrar;
+        this.gpayDelegate = gpayDelegate;
     }
 
     /**
@@ -38,15 +40,20 @@ public class StripeFlutterPlugin implements MethodCallHandler {
      */
     public static void registerWith(Registrar registrar) {
         final MethodChannel channel = new MethodChannel(registrar.messenger(), "stripe_api");
-        channel.setMethodCallHandler(new StripeFlutterPlugin(registrar));
+        GooglePayDelegate gpayDelegate = new GooglePayDelegate(registrar.activity());
+        channel.setMethodCallHandler(new StripeFlutterPlugin(registrar, gpayDelegate));
     }
 
     @Override
     public void onMethodCall(MethodCall call, final Result result) {
         if (call.method.equals("init")) {
-            String apiKey = call.arguments();
-            stripe = new Stripe(registrar.activity(), apiKey);
-            Log.d("tag", "initialized Stripe successfully, with apiKey: " + apiKey);
+            String publishableKey = call.arguments();
+            if (TextUtils.isEmpty(publishableKey)) {
+                result.error("Stripe publishableKey cannot be empty", null, null);
+                return;
+            }
+            gpayDelegate.setStripeApiKey(publishableKey);
+            stripe = new Stripe(registrar.activity(), publishableKey);
             result.success(null);
         } else if (call.method.equals("createSource")) {
             Map<String, ?> cardMap = call.arguments();
@@ -78,6 +85,12 @@ public class StripeFlutterPlugin implements MethodCallHandler {
                 }
             };
             stripe.createSource(SourceParams.createCardParams(card), sourceCallback);
+        } else if (call.method.equals("isGooglePayAvailable")) { // returns boolean
+            gpayDelegate.isGooglePayAvailable(result);
+        } else if (call.method.equals("cardFromGooglePay")) { // returns {token: tokenId, card: stripeCard}
+            Boolean billingAddressRequired = call.arguments();
+            billingAddressRequired = billingAddressRequired != null ? billingAddressRequired : false;
+            gpayDelegate.cardFromGooglePay(billingAddressRequired, result);
         } else {
             result.notImplemented();
         }
