@@ -1,10 +1,10 @@
 import Flutter
 import UIKit
 
-public class SwiftFlutterPlugin: NSObject, FlutterPlugin {
+public class SwiftStripeApiPlugin: NSObject, FlutterPlugin {
   public static func register(with registrar: FlutterPluginRegistrar) {
-    let channel = FlutterMethodChannel(name: "flutter_plugin", binaryMessenger: registrar.messenger())
-    let instance = SwiftFlutterPlugin()
+    let channel = FlutterMethodChannel(name: "stripe_api", binaryMessenger: registrar.messenger())
+    let instance = SwiftStripeApiPlugin()
     registrar.addMethodCallDelegate(instance, channel: channel)
   }
 

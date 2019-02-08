@@ -74,7 +74,7 @@ public class GooglePayDelegate implements PluginRegistry.ActivityResultListener 
                             Map<String, Object> resultMap = new HashMap<>();
                             resultMap.put("card", card.toMap());
                             resultMap.put("token", stripeToken.getId());
-                            StripeFlutterPlugin.removeNullAndEmptyParamsIncl(resultMap);
+                            StripeApiPlugin.removeNullAndEmptyParamsIncl(resultMap);
                             pendingResult.success(resultMap);
 //                            createUpdateBillingSingle(card.getLast4(), card.getBrand(), card.getCountry(), card.getFunding(), stripeToken.getId())
 //                                    .doOnSubscribe(disposable -> showLoadingDialog())

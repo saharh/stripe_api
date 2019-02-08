@@ -23,14 +23,14 @@ import io.flutter.plugin.common.PluginRegistry.Registrar;
 /**
  * FlutterPlugin
  */
-public class StripeFlutterPlugin implements MethodCallHandler {
+public class StripeApiPlugin implements MethodCallHandler {
     private Stripe stripe;
     Registrar registrar;
     SourceCallback sourceCallback;
     private GooglePayDelegate gpayDelegate;
 
 
-    public StripeFlutterPlugin(Registrar registrar, GooglePayDelegate gpayDelegate) {
+    public StripeApiPlugin(Registrar registrar, GooglePayDelegate gpayDelegate) {
         this.registrar = registrar;
         this.gpayDelegate = gpayDelegate;
     }
@@ -42,7 +42,7 @@ public class StripeFlutterPlugin implements MethodCallHandler {
         final MethodChannel channel = new MethodChannel(registrar.messenger(), "stripe_api");
         GooglePayDelegate gpayDelegate = new GooglePayDelegate(registrar.activity());
         registrar.addActivityResultListener(gpayDelegate);
-        channel.setMethodCallHandler(new StripeFlutterPlugin(registrar, gpayDelegate));
+        channel.setMethodCallHandler(new StripeApiPlugin(registrar, gpayDelegate));
     }
 
     @Override
