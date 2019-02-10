@@ -197,10 +197,11 @@ class _MyAppState extends State<MyApp> {
     StripeCard card = new StripeCard(
         number: '4242 4242 4242 4242', cvc: '713', expMonth: 5, expYear: 2019);
     card.name = 'Jhonny Bravos';
-    card.addressZip = "4928173";
-    card.addressLine1 = "4063  Cabell Avenue";
-    card.addressCity = "Arlington";
-    card.
+    card.addressZip = "33056";
+    card.addressLine1 = "1080  Golden Street";
+    card.addressCity = "Opa Locka";
+    card.addressState = "Florida";
+    card.addressCountry = "US";
     Stripe.instance.createCardSource(card).then((source) {
       print('done, source: ' + source.toString());
     }).then((source) {
