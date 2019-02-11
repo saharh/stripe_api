@@ -113,7 +113,8 @@ class _MyAppState extends State<MyApp> {
   void _saveCard() {
     StripeCard card = new StripeCard(
         number: '4242 4242 4242 4242', cvc: '713', expMonth: 5, expYear: 2019);
-    card.name = 'Jhonny Bravo';
+    card.name = 'Jhonny Bravos';
+    card.addressZip = "4928173";
     Stripe.instance.createCardToken(card).then((c) {
       print(c);
       return CustomerSession.instance.addCustomerSource(c.id);
@@ -195,7 +196,12 @@ class _MyAppState extends State<MyApp> {
   void _createSource() {
     StripeCard card = new StripeCard(
         number: '4242 4242 4242 4242', cvc: '713', expMonth: 5, expYear: 2019);
-    card.name = 'Jhonny Bravo';
+    card.name = 'Jhonny Bravos';
+    card.addressZip = "33056";
+    card.addressLine1 = "1080  Golden Street";
+    card.addressCity = "Opa Locka";
+    card.addressState = "Florida";
+    card.addressCountry = "US";
     Stripe.instance.createCardSource(card).then((source) {
       print('done, source: ' + source.toString());
     }).then((source) {
