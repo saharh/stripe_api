@@ -1,6 +1,6 @@
 package com.applaudsoft.stripe_api;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.text.TextUtils;
 
 import com.stripe.android.SourceCallback;
