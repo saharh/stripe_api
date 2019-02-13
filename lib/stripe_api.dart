@@ -23,8 +23,8 @@ export 'model/token.dart';
 class StripeFlutterPlugin {
   static const MethodChannel _channel = const MethodChannel('stripe_api');
 
-  static Future<void> init(String apiKey) async {
-    await _channel.invokeMethod('init', apiKey);
+  static Future<void> init(String publishableKey, {String appleMerchantIdentifier}) async {
+    await _channel.invokeMethod('init', {"publishableKey": publishableKey, "appleMerchantIdentifier": appleMerchantIdentifier});
     return;
   }
 
