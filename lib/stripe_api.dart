@@ -60,11 +60,11 @@ class Stripe {
 
   Stripe._internal(this.publishableKey);
 
-  static void init(String publishableKey) async {
+  static void init(String publishableKey, {String appleMerchantIdentifier}) async {
     if (_instance == null) {
       _validateKey(publishableKey);
       _instance = new Stripe._internal(publishableKey);
-      await _instance.initStripe();
+      await _instance.initStripe(appleMerchantIdentifier: appleMerchantIdentifier);
     }
   }
 
@@ -112,8 +112,8 @@ class Stripe {
     }
   }
 
-  Future initStripe() async {
-    StripeFlutterPlugin.init(this.publishableKey);
+  Future initStripe({String appleMerchantIdentifier}) async {
+    StripeFlutterPlugin.init(this.publishableKey, appleMerchantIdentifier: appleMerchantIdentifier);
   }
 }
 
