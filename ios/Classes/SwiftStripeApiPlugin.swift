@@ -11,8 +11,9 @@ public class SwiftStripeApiPlugin: NSObject, FlutterPlugin {
 
   public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
     if call.method == "init" {
-        STPPaymentConfiguration.shared().publishableKey = call.arguments as! String
-//        STPPaymentConfiguration.shared().appleMerchantIdentifier = "your apple merchant identifier"
+        let args = call.arguments as! [String:Any]
+        STPPaymentConfiguration.shared().publishableKey = args["publishableKey"] as! String
+        STPPaymentConfiguration.shared().appleMerchantIdentifier = args["appleMerchantIdentifier"] as? String
         result(nil)
     } else if call.method == "createSource" {
         let args = call.arguments as! [String:Any]
