@@ -39,7 +39,10 @@ public class SwiftStripeApiPlugin: NSObject, FlutterPlugin {
             result(self.sourceToDict(source: source!))
         }
         STPAPIClient.shared().createSource(with: sourceParams, completion: sourceCallback)
-
+    } else if call.method == "isGooglePayAvailable" {
+        result(false)
+    } else if call.method == "isApplePayAvailable" {
+        result(Stripe.deviceSupportsApplePay())
     } else {
         result(FlutterMethodNotImplemented)
     }
