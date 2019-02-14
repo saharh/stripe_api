@@ -1,6 +1,5 @@
 package com.applaudsoft.stripe_api;
 
-import androidx.annotation.NonNull;
 import android.text.TextUtils;
 
 import com.stripe.android.SourceCallback;
@@ -14,6 +13,7 @@ import org.json.JSONObject;
 import java.util.HashSet;
 import java.util.Map;
 
+import androidx.annotation.NonNull;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
@@ -48,7 +48,7 @@ public class StripeApiPlugin implements MethodCallHandler {
     @Override
     public void onMethodCall(MethodCall call, final Result result) {
         if (call.method.equals("init")) {
-            String publishableKey = call.arguments();
+            String publishableKey = call.argument("publishableKey");
             if (TextUtils.isEmpty(publishableKey)) {
                 result.error("Stripe publishableKey cannot be empty", null, null);
                 return;
