@@ -230,6 +230,8 @@ class _MyAppState extends State<MyApp> {
     }
     Map map = await Stripe.instance.cardFromApplePay();
     print('Result: $map');
+    await Future.delayed(Duration(seconds: 3));
+    await Stripe.instance.dismissPaymentAuth(false);
   }
 }
 

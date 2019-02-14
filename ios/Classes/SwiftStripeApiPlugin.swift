@@ -3,7 +3,8 @@ import UIKit
 import Stripe
 
 public class SwiftStripeApiPlugin: NSObject, FlutterPlugin, PKPaymentAuthorizationViewControllerDelegate {
-    var _pendingResult : FlutterResult?;
+    var _pendingResult : FlutterResult?
+    var _pendingPayAuthCompletion : ((PKPaymentAuthorizationStatus) -> Void)?
     
     public static func register(with registrar: FlutterPluginRegistrar) {
         let channel = FlutterMethodChannel(name: "stripe_api", binaryMessenger: registrar.messenger())
@@ -60,6 +61,10 @@ public class SwiftStripeApiPlugin: NSObject, FlutterPlugin, PKPaymentAuthorizati
             } else {
                 result(FlutterError(code: "Cannot submit Payment Request", message: nil, details: nil))
             }
+        } else if call.method == "dismissPaymentAuth" {
+            let args = call.arguments as! [String:Any]
+            let res = (args["success"] as? Bool) == true ? PKPaymentAuthorizationStatus.success : PKPaymentAuthorizationStatus.failure
+            self._pendingPayAuthCompletion?(res)
         } else {
             result(FlutterMethodNotImplemented)
         }
@@ -70,13 +75,14 @@ public class SwiftStripeApiPlugin: NSObject, FlutterPlugin, PKPaymentAuthorizati
 //        return ret
 //    }
     
-    private func paymentAuthorizationViewController(_ controller: PKPaymentAuthorizationViewController, didAuthorizePayment payment: PKPayment, completion: @escaping (PKPaymentAuthorizationStatus) -> Void) {
+    public func paymentAuthorizationViewController(_ controller: PKPaymentAuthorizationViewController, didAuthorizePayment payment: PKPayment, completion: @escaping (PKPaymentAuthorizationStatus) -> Void) {
         STPAPIClient.shared().createSource(with: payment) { (source: STPSource?, error: Error?) in
             guard let _ = source, error == nil else {
                 self._pendingResult?(FlutterError(code: error?.localizedDescription ?? "Unknown Error", message: nil, details: nil))
                 return
             }
-            completion(.success)
+            self._pendingPayAuthCompletion = completion
+//            completion(.success)
             let result = ["card" : source?.cardDetails?.allResponseFields,
                           "token": source?.stripeID,
                           ] as [String: Any?]
