@@ -70,6 +70,7 @@ public class StripeApiPlugin implements MethodCallHandler {
                     (String) cardMap.get("address_state"),
                     (String) cardMap.get("address_zip"),
                     (String) cardMap.get("address_country"),
+                    (String) cardMap.get("currency"),
                     null);
             sourceCallback = new SourceCallback() {
                 @Override

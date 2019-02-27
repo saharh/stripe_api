@@ -204,6 +204,7 @@ class _MyAppState extends State<MyApp> {
     card.addressCity = "Opa Locka";
     card.addressState = "Florida";
     card.addressCountry = "US";
+    card.currency = "USD";
     Stripe.instance.createCardSource(card).then((source) {
       print('done, source: ' + source.toString());
     }).then((source) {
