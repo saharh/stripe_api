@@ -128,6 +128,9 @@ public class GooglePayDelegate implements PluginRegistry.ActivityResultListener 
     public void cardFromGooglePay(boolean billingAddressRequired, final MethodChannel.Result result) {
         PaymentDataRequest request = createPaymentDataRequest(billingAddressRequired);
         if (request != null) {
+            if (pendingResult != null) {
+                sendError("Login in progress", null, null);
+            }
             pendingResult = result;
             AutoResolveHelper.resolveTask(
                     paymentsClient.loadPaymentData(request),
