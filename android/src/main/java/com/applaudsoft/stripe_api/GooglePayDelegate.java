@@ -2,7 +2,6 @@ package com.applaudsoft.stripe_api;
 
 import android.app.Activity;
 import android.content.Intent;
-import androidx.annotation.NonNull;
 import android.util.Log;
 
 import com.google.android.gms.common.api.ApiException;
@@ -27,6 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import androidx.annotation.NonNull;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.PluginRegistry;
 
@@ -75,27 +75,26 @@ public class GooglePayDelegate implements PluginRegistry.ActivityResultListener 
                             resultMap.put("card", card.toMap());
                             resultMap.put("token", stripeToken.getId());
                             StripeApiPlugin.removeNullAndEmptyParamsIncl(resultMap);
-                            pendingResult.success(resultMap);
+                            sendSuccess(resultMap);
 //                            createUpdateBillingSingle(card.getLast4(), card.getBrand(), card.getCountry(), card.getFunding(), stripeToken.getId())
 //                                    .doOnSubscribe(disposable -> showLoadingDialog())
 //                                    .compose(bindUntilDestroy())
 //                                    .observeOn(mainThread())
 //                                    .subscribe(resp -> handleUpdateBillingResult(resp, "google_pay"), new BillingErrorHandler(this).reportOnError("update_billing_request", errorParams()));
                         } else {
-                            pendingResult.success(null);
+                            sendSuccess(null);
                         }
                         break;
                     case Activity.RESULT_CANCELED:
-                        pendingResult.success(null);
+                        sendSuccess(null);
                         break;
                     case AutoResolveHelper.RESULT_ERROR:
                         Status status = AutoResolveHelper.getStatusFromIntent(data);
-                        pendingResult.error("Google Pay returned error: " + (status != null ? status.getStatusMessage() : ""), null, null);
-//                        logEventGlobal("billing_gpay_result_error", CollectionUtils.asMap("status", status != null ? status.getStatusMessage() : "empty"));
+                        sendError("Google Pay returned error: " + (status != null ? status.getStatusMessage() : ""), null, null);
                         // Log the status for debugging. Generally there is no need to show an error to the user as the Google Payment API will do that
                         break;
                     default:
-                        pendingResult.error("Unexpected onActivityResult result", null, null);
+                        sendError("Unexpected onActivityResult result", null, null);
                         break;
                 }
                 break;
@@ -208,5 +207,19 @@ public class GooglePayDelegate implements PluginRegistry.ActivityResultListener 
                             .build());
         }
         return paymentsClient;
+    }
+
+    private void sendSuccess(Object o) {
+        if (pendingResult != null) {
+            pendingResult.success(o);
+        }
+        pendingResult = null;
+    }
+
+    private void sendError(String s, String s1, Object o) {
+        if (pendingResult != null) {
+            pendingResult.error(s, s1, o);
+        }
+        pendingResult = null;
     }
 }
