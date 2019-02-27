@@ -25,7 +25,6 @@ class StripeFlutterPlugin {
 
   static Future<void> init(String publishableKey, {String appleMerchantIdentifier}) async {
     await _channel.invokeMethod('init', {"publishableKey": publishableKey, "appleMerchantIdentifier": appleMerchantIdentifier});
-    return;
   }
 
   static Future<Source> createSource(StripeCard card) async {
@@ -52,6 +51,20 @@ class StripeFlutterPlugin {
     map["card"] = StripeCard.fromJson(cardMap);
     return map;
   }
+  static Future<Map> cardFromApplePay() async {
+    Map<dynamic, dynamic> map = await _channel.invokeMethod('cardFromApplePay');
+    if (map == null) {
+      return null;
+    }
+    var cardMap = map["card"];
+    map["card"] = StripeCard.fromJson(cardMap);
+    return map;
+  }
+
+  static Future<void> dismissPaymentAuth(bool success) async {
+    await _channel.invokeMethod('dismissPaymentAuth', {"success": success});
+  }
+
 }
 
 class Stripe {
@@ -99,6 +112,14 @@ class Stripe {
 
   Future<Map> cardFromGooglePay() async {
     return await StripeFlutterPlugin.cardFromGooglePay();
+  }
+
+  Future<Map> cardFromApplePay() async {
+    return await StripeFlutterPlugin.cardFromApplePay();
+  }
+
+  Future<void> dismissPaymentAuth(bool success) async {
+    return await StripeFlutterPlugin.dismissPaymentAuth(success);
   }
 
   Future<Token> createBankAccountToken(StripeCard card) async {

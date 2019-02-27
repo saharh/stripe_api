@@ -26,7 +26,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    Stripe.init('pk_test_oPkqhExHOa16kgTdguOv5xpS');
+    Stripe.init('pk_test_oPkqhExHOa16kgTdguOv5xpS', appleMerchantIdentifier: "merchant_id");
     this.brandName = '';
   }
 
@@ -85,6 +85,8 @@ class _MyAppState extends State<MyApp> {
                   onPressed: _createSource, child: new Text('Create Source')),
               new FlatButton(
                   onPressed: _googlePay, child: new Text('Google Pay')),
+              new FlatButton(
+                  onPressed: _applePay, child: new Text('Apple Pay')),
               new SizedBox(height: 12.0),
             ],
           ),
@@ -214,11 +216,22 @@ class _MyAppState extends State<MyApp> {
   void _googlePay() async{
     bool googlePayAvailable = await Stripe.instance.isGooglePayAvailable();
     if (!googlePayAvailable) {
-      print('GPAY not available!');
+      print('Google Pay not available!');
       return;
     }
     Map map = await Stripe.instance.cardFromGooglePay();
     print('Result: $map');
+  }
+  void _applePay() async{
+    bool applePayAvailable = await Stripe.instance.isApplePayAvailable();
+    if (!applePayAvailable) {
+      print('Apple Pay not available!');
+      return;
+    }
+    Map map = await Stripe.instance.cardFromApplePay();
+    print('Result: $map');
+    await Future.delayed(Duration(seconds: 3));
+    await Stripe.instance.dismissPaymentAuth(false);
   }
 }
 
