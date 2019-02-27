@@ -129,7 +129,7 @@ public class GooglePayDelegate implements PluginRegistry.ActivityResultListener 
         PaymentDataRequest request = createPaymentDataRequest(billingAddressRequired);
         if (request != null) {
             if (pendingResult != null) {
-                sendError("Login in progress", null, null);
+                sendError("Request in progress", null, null);
             }
             pendingResult = result;
             AutoResolveHelper.resolveTask(
