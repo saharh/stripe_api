@@ -12,6 +12,15 @@ public class SwiftStripeApiPlugin: NSObject, FlutterPlugin, PKPaymentAuthorizati
         registrar.addMethodCallDelegate(instance, channel: channel)
     }
     
+    fileprivate func sendError(code: String, message: String?, details: Any?)    {
+        _pendingResult?(FlutterError(code: code, message: message, details: details))
+        _pendingResult = nil;
+    }
+    fileprivate func sendSuccess(_ result: Any?)    {
+        _pendingResult?(result)
+        _pendingResult = nil;
+    }
+    
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
         if call.method == "init" {
             let args = call.arguments as! [String:Any]
@@ -26,6 +35,7 @@ public class SwiftStripeApiPlugin: NSObject, FlutterPlugin, PKPaymentAuthorizati
             cardParams.expYear = args["exp_year"] as? UInt ?? 0
             cardParams.cvc = args["cvc"] as? String
             cardParams.name = args["name"] as? String
+            cardParams.currency = args["currency"] as? String
             let address = STPAddress.init()
             address.line1 = args["address_line1"] as? String
             address.line2 = args["address_line2"] as? String
@@ -47,14 +57,18 @@ public class SwiftStripeApiPlugin: NSObject, FlutterPlugin, PKPaymentAuthorizati
         } else if call.method == "isApplePayAvailable" {
             result(Stripe.deviceSupportsApplePay())
         } else if call.method == "cardFromApplePay" {
+            let args = call.arguments as! [String:Any]
             let appleMerchantIdentifier = STPPaymentConfiguration.shared().appleMerchantIdentifier!
             let paymentRequest = Stripe.paymentRequest(withMerchantIdentifier: appleMerchantIdentifier, country: "US", currency: "USD")
             paymentRequest.paymentSummaryItems = [
-                PKPaymentSummaryItem(label: "Wabi Virtual Number", amount: 4.00)
+                PKPaymentSummaryItem(label: "Wabi Virtual Number", amount: args["amount"] as? NSDecimalNumber ?? 0.00)
             ]
             if Stripe.canSubmitPaymentRequest(paymentRequest) {
                 let paymentAuthorizationViewController = PKPaymentAuthorizationViewController(paymentRequest: paymentRequest)!
                 paymentAuthorizationViewController.delegate = self
+                if (_pendingResult != nil) {
+                    sendError(code: "Request in progress", message: nil, details: nil)
+                }
                 _pendingResult = result
                 let vc = UIApplication.shared.delegate!.window!!.rootViewController!
                 vc.present(paymentAuthorizationViewController, animated: true, completion: nil)
@@ -70,24 +84,22 @@ public class SwiftStripeApiPlugin: NSObject, FlutterPlugin, PKPaymentAuthorizati
         }
     }
     
-//    func sourceToDict(source: STPSource) -> [AnyHashable:Any?] {
-//        let ret = source.allResponseFields
-//        return ret
-//    }
+    //    func sourceToDict(source: STPSource) -> [AnyHashable:Any?] {
+    //        let ret = source.allResponseFields
+    //        return ret
+    //    }
     
     public func paymentAuthorizationViewController(_ controller: PKPaymentAuthorizationViewController, didAuthorizePayment payment: PKPayment, completion: @escaping (PKPaymentAuthorizationStatus) -> Void) {
         STPAPIClient.shared().createSource(with: payment) { (source: STPSource?, error: Error?) in
             guard let _ = source, error == nil else {
-                self._pendingResult?(FlutterError(code: error?.localizedDescription ?? "Unknown Error", message: nil, details: nil))
+                self.sendError(code: error?.localizedDescription ?? "Unknown Error", message: nil, details: nil)
                 return
             }
             self._pendingPayAuthCompletion = completion
-//            completion(.success)
+            //            completion(.success)
             let result = ["card" : source?.cardDetails?.allResponseFields,
-                          "token": source?.stripeID,
-                          ] as [String: Any?]
-            self._pendingResult?(result)
-            self._pendingResult = nil
+                          "token": source?.stripeID] as [String: Any?]
+            self.sendSuccess(result)
             //            submitTokenToBackend(token, completion: { (error: Error?) in
             //                if let error = error {
             //                    // Present error to user...
