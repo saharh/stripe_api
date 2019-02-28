@@ -60,8 +60,9 @@ public class SwiftStripeApiPlugin: NSObject, FlutterPlugin, PKPaymentAuthorizati
             let args = call.arguments as! [String:Any]
             let appleMerchantIdentifier = STPPaymentConfiguration.shared().appleMerchantIdentifier!
             let paymentRequest = Stripe.paymentRequest(withMerchantIdentifier: appleMerchantIdentifier, country: "US", currency: "USD")
+            let amount = args["amount"] as? NSNumber
             paymentRequest.paymentSummaryItems = [
-                PKPaymentSummaryItem(label: "Wabi Virtual Number", amount: args["amount"] as? NSDecimalNumber ?? 0.00)
+                PKPaymentSummaryItem(label: "Wabi Virtual Number", amount: NSDecimalNumber(floatLiteral: Double(truncating: amount ?? 4.00)), type: amount != nil ? .final : .pending)
             ]
             if Stripe.canSubmitPaymentRequest(paymentRequest) {
                 let paymentAuthorizationViewController = PKPaymentAuthorizationViewController(paymentRequest: paymentRequest)!
