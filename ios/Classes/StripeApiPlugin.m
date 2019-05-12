@@ -3,6 +3,6 @@
 
 @implementation StripeApiPlugin
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
-  [SwiftStripeApiPlugin registerWithRegistrar:registrar];
+  // [SwiftStripeApiPlugin registerWithRegistrar:registrar];
 }
 @end
