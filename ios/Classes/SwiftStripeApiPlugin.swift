@@ -28,7 +28,7 @@ public class SwiftStripeApiPlugin: NSObject, FlutterPlugin {
 //            STPPaymentConfiguration.shared().publishableKey = args["publishableKey"] as! String
 //            STPPaymentConfiguration.shared().appleMerchantIdentifier = args["appleMerchantIdentifier"] as? String
             result(nil)
-        } else if call.method == "createSource" {
+        } else if call.method == "createSourceFromCard" {
             result(nil)
 //            let args = call.arguments as! [String:Any]
 //            let cardParams = STPCardParams.init()

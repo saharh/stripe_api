@@ -56,7 +56,7 @@ public class StripeApiPlugin implements MethodCallHandler {
             gpayDelegate.setStripeApiKey(publishableKey);
             stripe = new Stripe(registrar.activity(), publishableKey);
             result.success(null);
-        } else if (call.method.equals("createSource")) {
+        } else if (call.method.equals("createSourceFromCard")) {
             Map<String, ?> cardMap = call.arguments();
             Card card = new Card(
                     (String) cardMap.get("number"),
@@ -87,6 +87,28 @@ public class StripeApiPlugin implements MethodCallHandler {
                 }
             };
             stripe.createSource(SourceParams.createCardParams(card), sourceCallback);
+        } else if (call.method.equals("createSourceFromAliPay")) {
+            sourceCallback = new SourceCallback() {
+                @Override
+                public void onError(Exception e) {
+                    String message = e.getMessage() != null ? e.getMessage() : e.toString();
+                    result.error(message, null, null);
+                }
+
+                @Override
+                public void onSuccess(Source source) {
+                    Map<String, Object> map = source.toMap();
+                    removeNullAndEmptyParamsIncl(map);
+                    result.success(map);
+                }
+            };
+            Map<String, ?> sourceParams = call.arguments();
+            stripe.createSource(SourceParams.createAlipayReusableParams(
+                    (String) sourceParams.get("currency"),
+                    (String) sourceParams.get("name"),
+                    (String) sourceParams.get("email"),
+                    (String) sourceParams.get("return_url")
+            ), sourceCallback);
         } else if (call.method.equals("isGooglePayAvailable")) {
             gpayDelegate.isGooglePayAvailable(result);
         } else if (call.method.equals("isApplePayAvailable")) {

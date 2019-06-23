@@ -27,9 +27,9 @@ class StripeFlutterPlugin {
     await _channel.invokeMethod('init', {"publishableKey": publishableKey, "appleMerchantIdentifier": appleMerchantIdentifier});
   }
 
-  static Future<Source> createSource(StripeCard card) async {
+  static Future<Source> createSourceFromCard(StripeCard card) async {
     final Map<String, dynamic> cardMap = card.toMap();
-    Map<dynamic, dynamic> sourceMap = await _channel.invokeMethod('createSource', cardMap);
+    Map<dynamic, dynamic> sourceMap = await _channel.invokeMethod('createSourceFromCard', cardMap);
     Source source = Source.fromJson(sourceMap);
     return source;
   }
@@ -51,10 +51,9 @@ class StripeFlutterPlugin {
     map["card"] = StripeCard.fromJson(cardMap);
     return map;
   }
+
   static Future<Map> cardFromApplePay([num amount]) async {
-    Map<dynamic, dynamic> map = await _channel.invokeMethod('cardFromApplePay', {
-      "amount" : amount
-    });
+    Map<dynamic, dynamic> map = await _channel.invokeMethod('cardFromApplePay', {"amount": amount});
     if (map == null) {
       return null;
     }
@@ -63,10 +62,19 @@ class StripeFlutterPlugin {
     return map;
   }
 
+  static Future<Source> createSourceFromAliPay({String currency, String name, String email, String returnUrl}) async {
+    Map<dynamic, dynamic> sourceMap =
+        await _channel.invokeMethod('createSourceFromAliPay', {"currency": currency, "name": name, "email": email, "return_url": returnUrl});
+    if (sourceMap == null) {
+      return null;
+    }
+    Source source = Source.fromJson(sourceMap);
+    return source;
+  }
+
   static Future<void> dismissPaymentAuth(bool success) async {
     await _channel.invokeMethod('dismissPaymentAuth', {"success": success});
   }
-
 }
 
 class Stripe {
@@ -95,7 +103,7 @@ class Stripe {
   }
 
   Future<Source> createCardSource(StripeCard card) async {
-    return await StripeFlutterPlugin.createSource(card);
+    return await StripeFlutterPlugin.createSourceFromCard(card);
   }
 
   Future<Token> createCardToken(StripeCard card) async {
@@ -118,6 +126,10 @@ class Stripe {
 
   Future<Map> cardFromApplePay([num amount]) async {
     return await StripeFlutterPlugin.cardFromApplePay(amount);
+  }
+
+  Future<Source> createSourceFromAliPay({String currency, String name, String email, String returnUrl}) async {
+    return await StripeFlutterPlugin.createSourceFromAliPay(currency: currency, name: name, email: email, returnUrl: returnUrl);
   }
 
   Future<void> dismissPaymentAuth(bool success) async {

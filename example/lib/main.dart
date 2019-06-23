@@ -18,7 +18,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-
   final TextEditingController controller = new TextEditingController();
 
   String brandName;
@@ -39,56 +38,45 @@ class _MyAppState extends State<MyApp> {
         ),
         body: new Container(
           alignment: Alignment.topCenter,
-          child: new Column(
-            children: <Widget>[
-              Text(brandName),
-              new SizedBox(height: 12.0),
-              new TextField(
-                controller: controller,
-                inputFormatters: [
-                  CardNumberFormatter(
-                    onCardBrandChanged: (brand) {
+          child: SingleChildScrollView(
+            child: new Column(
+              children: <Widget>[
+                Text(brandName),
+                new SizedBox(height: 12.0),
+                new TextField(
+                  controller: controller,
+                  inputFormatters: [
+                    CardNumberFormatter(onCardBrandChanged: (brand) {
                       print('onCardBrandChanged : ' + brand);
                       setState(() {
                         brandName = brand;
                       });
-                    },
-                    onCardNumberComplete: (){
+                    }, onCardNumberComplete: () {
                       print('onCardNumberComplete');
-                    },
-                    onShowError: (isError) {
+                    }, onShowError: (isError) {
                       print('Is card number valid ? ${!isError}');
-                    }
-                  ),
-                ],
-              ),
-              new SizedBox(height: 12.0),
-              new FlatButton(
-                  onPressed: _startSession, child: new Text('Start Session')),
-              new SizedBox(height: 12.0),
-              new FlatButton(
-                  onPressed: _getCustomer, child: new Text('Get Customer')),
-              new SizedBox(height: 12.0),
-              new FlatButton(
-                  onPressed: _endSession, child: new Text('End Session')),
-              new SizedBox(height: 12.0),
-              new FlatButton(
-                  onPressed: _saveCard, child: new Text('Save Card')),
-              new SizedBox(height: 12.0),
-              new FlatButton(
-                  onPressed: _changeDefaultCard,
-                  child: new Text('Change Default')),
-              new SizedBox(height: 12.0),
-              new FlatButton(
-                  onPressed: _deleteCard, child: new Text('Delete Card')),
-              new FlatButton(
-                  onPressed: _createSource, child: new Text('Create Source')),
-              new FlatButton(
-                  onPressed: _googlePay, child: new Text('Google Pay')),
-              new FlatButton(
-                  onPressed: _applePay, child: new Text('Apple Pay')),
-              new SizedBox(height: 12.0),
-            ],
+                    }),
+                  ],
+                ),
+                new SizedBox(height: 12.0),
+                new FlatButton(onPressed: _startSession, child: new Text('Start Session')),
+                new SizedBox(height: 12.0),
+                new FlatButton(onPressed: _getCustomer, child: new Text('Get Customer')),
+                new SizedBox(height: 12.0),
+                new FlatButton(onPressed: _endSession, child: new Text('End Session')),
+                new SizedBox(height: 12.0),
+                new FlatButton(onPressed: _saveCard, child: new Text('Save Card')),
+                new SizedBox(height: 12.0),
+                new FlatButton(onPressed: _changeDefaultCard, child: new Text('Change Default')),
+                new SizedBox(height: 12.0),
+                new FlatButton(onPressed: _deleteCard, child: new Text('Delete Card')),
+                new FlatButton(onPressed: _createCardSource, child: new Text('Create Source from Card')),
+                new FlatButton(onPressed: _createAliPaySource, child: new Text('Create Source from AliPay')),
+                new FlatButton(onPressed: _googlePay, child: new Text('Google Pay')),
+                new FlatButton(onPressed: _applePay, child: new Text('Apple Pay')),
+                new SizedBox(height: 12.0),
+              ],
+            ),
           ),
         ),
       ),
@@ -113,8 +101,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   void _saveCard() {
-    StripeCard card = new StripeCard(
-        number: '4242 4242 4242 4242', cvc: '713', expMonth: 5, expYear: 2019);
+    StripeCard card = new StripeCard(number: '4242 4242 4242 4242', cvc: '713', expMonth: 5, expYear: 2019);
     card.name = 'Jhonny Bravos';
     card.addressZip = "4928173";
     Stripe.instance.createCardToken(card).then((c) {
@@ -131,8 +118,7 @@ class _MyAppState extends State<MyApp> {
     try {
       final customer = await CustomerSession.instance.retrieveCurrentCustomer();
       final card = customer.sources[1].asCard();
-      final v =
-          await CustomerSession.instance.updateCustomerDefaultSource(card.id);
+      final v = await CustomerSession.instance.updateCustomerDefaultSource(card.id);
       print(v);
     } catch (error) {
       print(error);
@@ -159,8 +145,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<String> _createEphemeralKey(String apiVersion) async {
-    final url =
-        'https://api.example/generate-ephemeral-key?api_version=$apiVersion';
+    final url = 'https://api.example/generate-ephemeral-key?api_version=$apiVersion';
     print(url);
 
     final response = await http.get(
@@ -178,10 +163,7 @@ class _MyAppState extends State<MyApp> {
     }
   }
 
-  Map<String, String> _getHeaders(
-      {String accessToken,
-      String acceptType = ContentTypeJson,
-      String contentType = ContentTypeJson}) {
+  Map<String, String> _getHeaders({String accessToken, String acceptType = ContentTypeJson, String contentType = ContentTypeJson}) {
     final Map<String, String> headers = new Map<String, String>();
     headers['Accept'] = acceptType;
     if (contentType != null) {
@@ -195,9 +177,8 @@ class _MyAppState extends State<MyApp> {
     return headers;
   }
 
-  void _createSource() {
-    StripeCard card = new StripeCard(
-        number: '4242 4242 4242 4242', cvc: '713', expMonth: 5, expYear: 2019);
+  void _createCardSource() {
+    StripeCard card = new StripeCard(number: '4242 4242 4242 4242', cvc: '713', expMonth: 5, expYear: 2020);
     card.name = 'Jhonny Bravos';
     card.addressZip = "33056";
     card.addressLine1 = "1080  Golden Street";
@@ -214,7 +195,22 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
-  void _googlePay() async{
+  void _createAliPaySource() {
+    Stripe.instance
+        .createSourceFromAliPay(
+      currency: "USD",
+      name: "Mr Zen Smith",
+      email: "zensmith@gmail.com",
+      returnUrl: "myapp://payment_method",
+    )
+        .then((source) {
+      print('done, source: ' + source.toString());
+    }).catchError((error) {
+      print(error);
+    });
+  }
+
+  void _googlePay() async {
     bool googlePayAvailable = await Stripe.instance.isGooglePayAvailable();
     if (!googlePayAvailable) {
       print('Google Pay not available!');
@@ -223,7 +219,8 @@ class _MyAppState extends State<MyApp> {
     Map map = await Stripe.instance.cardFromGooglePay();
     print('Result: $map');
   }
-  void _applePay() async{
+
+  void _applePay() async {
     bool applePayAvailable = await Stripe.instance.isApplePayAvailable();
     if (!applePayAvailable) {
       print('Apple Pay not available!');
