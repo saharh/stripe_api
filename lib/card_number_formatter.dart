@@ -1,12 +1,9 @@
-import 'dart:math' as math;
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'card_utils.dart';
 import 'model/card.dart';
 import 'stripe_text_utils.dart';
-
 
 class CardNumberFormatter extends TextInputFormatter {
   final ValueChanged<String> onCardBrandChanged;
@@ -26,9 +23,7 @@ class CardNumberFormatter extends TextInputFormatter {
   }
 
   @override
-  TextEditingValue formatEditUpdate(
-      TextEditingValue oldValue, TextEditingValue newValue) {
-
+  TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
     if (oldValue.text == newValue.text) {
       return newValue;
     }
@@ -42,8 +37,7 @@ class CardNumberFormatter extends TextInputFormatter {
       return newValue;
     }
 
-    List<String> cardParts =
-        separateCardNumberGroups(spacelessNumber, _cardBrand);
+    List<String> cardParts = separateCardNumberGroups(spacelessNumber, _cardBrand);
     String formattedNumber = '';
     for (int i = 0; i < cardParts.length; i++) {
       if (cardParts[i] == null) {
@@ -57,21 +51,20 @@ class CardNumberFormatter extends TextInputFormatter {
       formattedNumber += cardParts[i];
     }
 
-
     TextSelection selection;
-    if(newValue.selection.start >= formattedNumber.length - 1) {
+    if (newValue.selection.start >= formattedNumber.length - 1) {
       selection = TextSelection.fromPosition(TextPosition(offset: formattedNumber.length));
     } else {
       selection = newValue.selection;
     }
 
     final computedValue = newValue.copyWith(
-        text: formattedNumber,
-        composing: TextRange.empty,
-        selection: selection,
+      text: formattedNumber,
+      composing: TextRange.empty,
+      selection: selection,
     );
 
-    if(computedValue.text.length == _lengthMax) {
+    if (computedValue.text.length == _lengthMax) {
       var before = _isCardNumberValid;
       _isCardNumberValid = CardUtils.isValidCardNumber(computedValue.text);
       if (onShowError != null) {
@@ -81,8 +74,7 @@ class CardNumberFormatter extends TextInputFormatter {
         onCardNumberComplete();
       }
     } else {
-      _isCardNumberValid =
-          computedValue.text != null && CardUtils.isValidCardNumber(computedValue.text);
+      _isCardNumberValid = computedValue.text != null && CardUtils.isValidCardNumber(computedValue.text);
       // Don't show errors if we aren't full-length.
       if (onShowError != null) {
         onShowError(false);
@@ -108,6 +100,25 @@ class CardNumberFormatter extends TextInputFormatter {
 
   void _updateCardBrandFromNumber(String partialNumber) {
     _updateCardBrand(CardUtils.getPossibleCardType(partialNumber));
+  }
+
+  static String formatCard(String cardNumber) {
+    String spacelessCardNumber = removeSpacesAndHyphens(cardNumber);
+    String cardBrand = CardUtils.getPossibleCardType(cardNumber);
+    List<String> cardParts = separateCardNumberGroups(spacelessCardNumber, cardBrand);
+    String formattedNumber = '';
+    for (int i = 0; i < cardParts.length; i++) {
+      if (cardParts[i] == null) {
+        break;
+      }
+
+      if (i != 0) {
+        formattedNumber += ' ';
+      }
+
+      formattedNumber += cardParts[i];
+    }
+    return formattedNumber;
   }
 }
 

@@ -1,9 +1,8 @@
 import 'package:stripe_api/model/model_utils.dart';
 
 import 'model/card.dart';
-import 'text_utils.dart';
-
 import 'stripe_text_utils.dart';
+import 'text_utils.dart';
 
 const int LENGTH_COMMON_CARD = 16;
 const int LENGTH_AMERICAN_EXPRESS = 15;

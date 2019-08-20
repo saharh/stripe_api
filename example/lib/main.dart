@@ -74,6 +74,7 @@ class _MyAppState extends State<MyApp> {
                 new FlatButton(onPressed: _createAliPaySource, child: new Text('Create Source from AliPay')),
                 new FlatButton(onPressed: _googlePay, child: new Text('Google Pay')),
                 new FlatButton(onPressed: _applePay, child: new Text('Apple Pay')),
+                new FlatButton(onPressed: _formatCard, child: new Text('Format Card')),
                 new SizedBox(height: 12.0),
               ],
             ),
@@ -230,6 +231,15 @@ class _MyAppState extends State<MyApp> {
     print('Result: $map');
     await Future.delayed(Duration(seconds: 3));
     await Stripe.instance.dismissPaymentAuth(false);
+  }
+
+  void _formatCard() {
+    String cardNumber = "4065972557141631";
+    String formatted = CardNumberFormatter.formatCard(cardNumber);
+    String brand = CardUtils.getPossibleCardType(cardNumber);
+    debugPrint('cardNumber: $cardNumber');
+    debugPrint('cardNumber brand: $brand');
+    debugPrint('cardNumber formatted: $formatted');
   }
 }
 
