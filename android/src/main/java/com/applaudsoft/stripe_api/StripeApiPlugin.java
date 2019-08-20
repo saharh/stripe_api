@@ -2,11 +2,12 @@ package com.applaudsoft.stripe_api;
 
 import android.text.TextUtils;
 
-import com.stripe.android.SourceCallback;
+import com.stripe.android.ApiResultCallback;
 import com.stripe.android.Stripe;
 import com.stripe.android.model.Card;
 import com.stripe.android.model.Source;
 import com.stripe.android.model.SourceParams;
+import com.stripe.android.model.StripeMapUtil;
 
 import org.json.JSONObject;
 
@@ -25,8 +26,8 @@ import io.flutter.plugin.common.PluginRegistry.Registrar;
  */
 public class StripeApiPlugin implements MethodCallHandler {
     private Stripe stripe;
-    Registrar registrar;
-    SourceCallback sourceCallback;
+    private Registrar registrar;
+    ApiResultCallback<Source> sourceCallback;
     private GooglePayDelegate gpayDelegate;
 
 
@@ -58,50 +59,62 @@ public class StripeApiPlugin implements MethodCallHandler {
             result.success(null);
         } else if (call.method.equals("createSourceFromCard")) {
             Map<String, ?> cardMap = call.arguments();
-            Card card = new Card(
+//            Card card = new Card(
+//                    (String) cardMap.get("number"),
+//                    (Integer) cardMap.get("exp_month"),
+//                    (Integer) cardMap.get("exp_year"),
+//                    (String) cardMap.get("cvc"),
+//                    (String) cardMap.get("name"),
+//                    (String) cardMap.get("address_line1"),
+//                    (String) cardMap.get("address_line2"),
+//                    (String) cardMap.get("address_city"),
+//                    (String) cardMap.get("address_state"),
+//                    (String) cardMap.get("address_zip"),
+//                    (String) cardMap.get("address_country"),
+//                    (String) cardMap.get("currency"),
+//                    null);
+            Card card = new Card.Builder(
                     (String) cardMap.get("number"),
                     (Integer) cardMap.get("exp_month"),
                     (Integer) cardMap.get("exp_year"),
-                    (String) cardMap.get("cvc"),
-                    (String) cardMap.get("name"),
-                    (String) cardMap.get("address_line1"),
-                    (String) cardMap.get("address_line2"),
-                    (String) cardMap.get("address_city"),
-                    (String) cardMap.get("address_state"),
-                    (String) cardMap.get("address_zip"),
-                    (String) cardMap.get("address_country"),
-                    (String) cardMap.get("currency"),
-                    null);
-            sourceCallback = new SourceCallback() {
-                @Override
-                public void onError(Exception e) {
-                    String message = e.getMessage() != null ? e.getMessage() : e.toString();
-                    result.error(message, null, null);
-                }
-
-                @Override
-                public void onSuccess(Source source) {
-                    Map<String, Object> map = source.toMap();
+                    (String) cardMap.get("cvc"))
+                    .name((String) cardMap.get("name"))
+                    .addressLine1((String) cardMap.get("address_line1"))
+                    .addressLine2((String) cardMap.get("address_line2"))
+                    .addressCity((String) cardMap.get("address_city"))
+                    .addressState((String) cardMap.get("address_state"))
+                    .addressZip((String) cardMap.get("address_zip"))
+                    .addressCountry((String) cardMap.get("address_country"))
+                    .currency((String) cardMap.get("currency"))
+                    .build();
+            sourceCallback = new ApiResultCallback<Source>() {
+                public void onSuccess(@NonNull Source source) {
+                    Map<String, Object> map = StripeMapUtil.SourceUtil.toMap(source);
                     removeNullAndEmptyParamsIncl(map);
                     result.success(map);
                 }
+
+                public void onError(@NonNull Exception error) {
+                    String message = error.getMessage() != null ? error.getMessage() : error.toString();
+                    result.error(message, null, null);
+                }
             };
+
             stripe.createSource(SourceParams.createCardParams(card), sourceCallback);
         } else if (call.method.equals("createSourceFromAliPay")) {
-            sourceCallback = new SourceCallback() {
-                @Override
-                public void onError(Exception e) {
-                    String message = e.getMessage() != null ? e.getMessage() : e.toString();
-                    result.error(message, null, null);
-                }
-
-                @Override
-                public void onSuccess(Source source) {
-                    Map<String, Object> map = source.toMap();
+            sourceCallback = new ApiResultCallback<Source>() {
+                public void onSuccess(@NonNull Source source) {
+                    Map<String, Object> map = StripeMapUtil.SourceUtil.toMap(source);
                     removeNullAndEmptyParamsIncl(map);
                     result.success(map);
                 }
+
+                public void onError(@NonNull Exception error) {
+                    String message = error.getMessage() != null ? error.getMessage() : error.toString();
+                    result.error(message, null, null);
+                }
             };
+
             Map<String, ?> sourceParams = call.arguments();
             stripe.createSource(SourceParams.createAlipayReusableParams(
                     (String) sourceParams.get("currency"),

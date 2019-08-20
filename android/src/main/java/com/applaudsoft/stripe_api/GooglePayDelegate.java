@@ -19,6 +19,7 @@ import com.google.android.gms.wallet.TransactionInfo;
 import com.google.android.gms.wallet.Wallet;
 import com.google.android.gms.wallet.WalletConstants;
 import com.stripe.android.model.Card;
+import com.stripe.android.model.StripeMapUtil;
 import com.stripe.android.model.Token;
 
 import java.util.Arrays;
@@ -72,7 +73,7 @@ public class GooglePayDelegate implements PluginRegistry.ActivityResultListener 
                             // This chargeToken function is a call to your own server, which should then connect to Stripe's API to finish the charge.
                             Card card = stripeToken.getCard();
                             Map<String, Object> resultMap = new HashMap<>();
-                            resultMap.put("card", card.toMap());
+                            resultMap.put("card", StripeMapUtil.CardUtil.toMap(card));
                             resultMap.put("token", stripeToken.getId());
                             StripeApiPlugin.removeNullAndEmptyParamsIncl(resultMap);
                             sendSuccess(resultMap);
