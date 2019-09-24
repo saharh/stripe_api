@@ -9,7 +9,6 @@ import com.google.android.gms.common.api.Status;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.wallet.AutoResolveHelper;
-import com.google.android.gms.wallet.CardRequirements;
 import com.google.android.gms.wallet.IsReadyToPayRequest;
 import com.google.android.gms.wallet.PaymentData;
 import com.google.android.gms.wallet.PaymentDataRequest;
@@ -18,9 +17,14 @@ import com.google.android.gms.wallet.PaymentsClient;
 import com.google.android.gms.wallet.TransactionInfo;
 import com.google.android.gms.wallet.Wallet;
 import com.google.android.gms.wallet.WalletConstants;
+import com.stripe.android.GooglePayConfig;
 import com.stripe.android.model.Card;
 import com.stripe.android.model.StripeMapUtil;
 import com.stripe.android.model.Token;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -108,22 +112,45 @@ public class GooglePayDelegate implements PluginRegistry.ActivityResultListener 
     }
 
     public void isGooglePayAvailable(final MethodChannel.Result result) {
-        IsReadyToPayRequest request = IsReadyToPayRequest.newBuilder()
-                .addAllowedPaymentMethods(GPAY_ALLOWED_PAY_METHODS)
-                .addAllowedCardNetworks(GPAY_ALLOWED_CARD_NETWORKS)
-                .build();
-        Task<Boolean> task = getPaymentClient().isReadyToPay(request);
-        task.addOnCompleteListener(new OnCompleteListener<Boolean>() {
-            @Override
-            public void onComplete(@NonNull Task<Boolean> taskRes) {
-                try {
-                    Boolean res = taskRes.getResult(ApiException.class);
-                    result.success(res == Boolean.TRUE);
-                } catch (Exception exception) {
-                    result.error(exception.getMessage(), null, null);
+//        IsReadyToPayRequest request = IsReadyToPayRequest.newBuilder()
+//                .addAllowedPaymentMethods(GPAY_ALLOWED_PAY_METHODS)
+//                .addAllowedCardNetworks(GPAY_ALLOWED_CARD_NETWORKS)
+//                .build();
+//        final IsReadyToPayRequest request = IsReadyToPayRequest.newBuilder()
+//                .addAllowedPaymentMethod(WalletConstants.PAYMENT_METHOD_CARD)
+//                .addAllowedPaymentMethod(WalletConstants.PAYMENT_METHOD_TOKENIZED_CARD)
+//                .build();
+        try {
+            final JSONObject cardPaymentMethod = new JSONObject()
+                    .put("type", "CARD")
+                    .put(
+                            "parameters",
+                            new JSONObject()
+                                    .put("allowedAuthMethods", allowedAuthMethodsJson())
+                                    .put("allowedCardNetworks", allowedCardNetworksJson())
+                    );
+            final JSONObject request = new JSONObject()
+                    .put("apiVersion", 2)
+                    .put("apiVersionMinor", 0)
+                    .put("allowedPaymentMethods",
+                            new JSONArray().put(cardPaymentMethod));
+
+            Task<Boolean> task = getPaymentClient().isReadyToPay(IsReadyToPayRequest.fromJson(request.toString()));
+            task.addOnCompleteListener(new OnCompleteListener<Boolean>() {
+                @Override
+                public void onComplete(@NonNull Task<Boolean> taskRes) {
+                    try {
+                        Boolean res = taskRes.getResult(ApiException.class);
+                        result.success(res == Boolean.TRUE);
+                    } catch (Exception exception) {
+                        result.error(exception.getMessage(), null, null);
+                    }
                 }
-            }
-        });
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+            result.error(e.getMessage(), null, null);
+        }
     }
 
     public void cardFromGooglePay(boolean billingAddressRequired, final MethodChannel.Result result) {
@@ -142,22 +169,84 @@ public class GooglePayDelegate implements PluginRegistry.ActivityResultListener 
         }
     }
 
-
     private PaymentDataRequest createPaymentDataRequest(boolean billingAddressRequired) {
-        PaymentDataRequest.Builder request =
-                PaymentDataRequest.newBuilder()
-                        .setTransactionInfo(createGPayTransactionInfo())
-                        .addAllowedPaymentMethods(GPAY_ALLOWED_PAY_METHODS)
-                        .setCardRequirements(
-                                CardRequirements.newBuilder()
-                                        .setBillingAddressRequired(billingAddressRequired)
-                                        .setBillingAddressFormat(WalletConstants.BILLING_ADDRESS_FORMAT_MIN)
-                                        .addAllowedCardNetworks(GPAY_ALLOWED_CARD_NETWORKS)
-                                        .setAllowPrepaidCards(true)
-                                        .build())
-                        .setPaymentMethodTokenizationParameters(createTokenizationParameters());
-        return request.build();
+
+        try {
+            final JSONObject tokenizationSpec = new GooglePayConfig(stripeApiKey).getTokenizationSpecification();
+            final JSONObject cardPaymentMethod = new JSONObject()
+                    .put("type", "CARD")
+                    .put(
+                            "parameters",
+                            new JSONObject()
+                                    .put("allowedAuthMethods", allowedAuthMethodsJson())
+                                    .put("allowedCardNetworks", allowedCardNetworksJson())
+                                    // require billing address
+                                    .put("billingAddressRequired", billingAddressRequired)
+                                    .put(
+                                            "billingAddressParameters",
+                                            new JSONObject()
+                                                    // require full billing address
+                                                    .put("format", "MIN")
+                                    )
+                    )
+                    .put("tokenizationSpecification", tokenizationSpec);
+
+            // create PaymentDataRequest
+            final String paymentDataRequest = new JSONObject()
+                    .put("apiVersion", 2)
+                    .put("apiVersionMinor", 0)
+                    .put("allowedPaymentMethods",
+                            new JSONArray().put(cardPaymentMethod))
+                    .put("transactionInfo", new JSONObject()
+//                            .put("totalPrice", "10.00")
+                                    .put("totalPriceStatus", "NOT_CURRENTLY_KNOWN")
+                                    .put("currencyCode", "USD")
+                    )
+                    .put("merchantInfo", new JSONObject()
+                            .put("merchantName", "Wabi"))
+
+                    // require email address
+//                    .put("emailRequired", true)
+                    .toString();
+
+            return PaymentDataRequest.fromJson(paymentDataRequest);
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
+
+    private JSONArray allowedAuthMethodsJson() {
+        return new JSONArray()
+                .put("PAN_ONLY")
+                .put("CRYPTOGRAM_3DS");
+    }
+
+    private JSONArray allowedCardNetworksJson() {
+        return new JSONArray()
+                .put("AMEX")
+                .put("DISCOVER")
+                .put("INTERAC")
+                .put("JCB")
+                .put("MASTERCARD")
+                .put("VISA");
+    }
+
+//    private PaymentDataRequest createPaymentDataRequest(boolean billingAddressRequired) {
+//        PaymentDataRequest.Builder request =
+//                PaymentDataRequest.newBuilder()
+//                        .setTransactionInfo(createGPayTransactionInfo())
+//                        .addAllowedPaymentMethods(GPAY_ALLOWED_PAY_METHODS)
+//                        .setCardRequirements(
+//                                CardRequirements.newBuilder()
+//                                        .setBillingAddressRequired(billingAddressRequired)
+//                                        .setBillingAddressFormat(WalletConstants.BILLING_ADDRESS_FORMAT_MIN)
+//                                        .addAllowedCardNetworks(GPAY_ALLOWED_CARD_NETWORKS)
+//                                        .setAllowPrepaidCards(true)
+//                                        .build())
+//                        .setPaymentMethodTokenizationParameters(createTokenizationParameters());
+//        return request.build();
+//    }
 
     @NonNull
     private TransactionInfo createGPayTransactionInfo() {
