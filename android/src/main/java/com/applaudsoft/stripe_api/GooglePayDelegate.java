@@ -9,7 +9,6 @@ import com.google.android.gms.common.api.Status;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.wallet.AutoResolveHelper;
-import com.google.android.gms.wallet.CardInfo;
 import com.google.android.gms.wallet.IsReadyToPayRequest;
 import com.google.android.gms.wallet.PaymentData;
 import com.google.android.gms.wallet.PaymentDataRequest;
@@ -67,37 +66,35 @@ public class GooglePayDelegate implements PluginRegistry.ActivityResultListener 
                 switch (resultCode) {
                     case Activity.RESULT_OK:
                         PaymentData paymentData = PaymentData.getFromIntent(data);
-//                        try {
-//                            JSONObject paymentDataJson = new JSONObject(paymentData.toJson());
-//                            PaymentMethodCreateParams params = PaymentMethodCreateParams.createFromGooglePay(paymentDataJson);
-//                            Map<String, ?> paramsMap = params.toParamMap();
-//                            Map<String, ?> card = (Map<String, ?>) paramsMap.get("card");
-//                            String token = (String) card.get("token");
-//                        } catch (Exception e) {
-//                            e.printStackTrace();
-//                        }
-                        // You can get some data on the user's card, such as the brand and last 4 digits
+                        try {
+                            JSONObject paymentDataJson = new JSONObject(paymentData.toJson());
+                            Token stripeToken = StripeMapUtil.TokenUtil.createFromGooglePay(paymentDataJson);
+                            // You can get some data on the user's card, such as the brand and last 4 digits
 //                        CardInfo info = paymentData.getCardInfo();
-                        // You can also pull the user address from the PaymentData object.
+                            // You can also pull the user address from the PaymentData object.
 //                        UserAddress address = paymentData.getShippingAddress();
-                        // This is the raw JSON string version of your Stripe token.
-                        String rawToken = paymentData.getPaymentMethodToken().getToken();
-                        Token stripeToken = Token.fromString(rawToken);
-                        if (stripeToken != null) {
-                            // This chargeToken function is a call to your own server, which should then connect to Stripe's API to finish the charge.
-                            Card card = stripeToken.getCard();
-                            Map<String, Object> resultMap = new HashMap<>();
-                            resultMap.put("card", StripeMapUtil.CardUtil.toMap(card));
-                            resultMap.put("token", stripeToken.getId());
-                            StripeApiPlugin.removeNullAndEmptyParamsIncl(resultMap);
-                            sendSuccess(resultMap);
+                            // This is the raw JSON string version of your Stripe token.
+//                            String rawToken = paymentData.getPaymentMethodToken().getToken();
+//                            Token stripeToken = Token.fromString(rawToken);
+                            if (stripeToken != null) {
+                                // This chargeToken function is a call to your own server, which should then connect to Stripe's API to finish the charge.
+                                Card card = stripeToken.getCard();
+                                Map<String, Object> resultMap = new HashMap<>();
+                                resultMap.put("card", StripeMapUtil.CardUtil.toMap(card));
+                                resultMap.put("token", stripeToken.getId());
+                                StripeApiPlugin.removeNullAndEmptyParamsIncl(resultMap);
+                                sendSuccess(resultMap);
 //                            createUpdateBillingSingle(card.getLast4(), card.getBrand(), card.getCountry(), card.getFunding(), stripeToken.getId())
 //                                    .doOnSubscribe(disposable -> showLoadingDialog())
 //                                    .compose(bindUntilDestroy())
 //                                    .observeOn(mainThread())
 //                                    .subscribe(resp -> handleUpdateBillingResult(resp, "google_pay"), new BillingErrorHandler(this).reportOnError("update_billing_request", errorParams()));
-                        } else {
-                            sendSuccess(null);
+                            } else {
+                                sendSuccess(null);
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            sendError("Google Pay error: " + e.getMessage(), null, null);
                         }
                         break;
                     case Activity.RESULT_CANCELED:

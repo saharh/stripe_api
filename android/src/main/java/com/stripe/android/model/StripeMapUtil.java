@@ -2,6 +2,9 @@ package com.stripe.android.model;
 
 import android.text.TextUtils;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -10,6 +13,51 @@ import java.util.Map;
 import androidx.annotation.NonNull;
 
 public class StripeMapUtil {
+    public static class TokenUtil {
+        public static Token createFromGooglePay(@NonNull JSONObject googlePayPaymentData)
+                throws JSONException {
+            final JSONObject paymentMethodData = googlePayPaymentData
+                    .getJSONObject("paymentMethodData");
+//            final JSONObject googlePayBillingAddress = paymentMethodData
+//                    .getJSONObject("info")
+//                    .optJSONObject("billingAddress");
+            final String paymentToken = paymentMethodData
+                    .getJSONObject("tokenizationData")
+                    .getString("token");
+
+            return Token.fromJson(new JSONObject(paymentToken));
+
+//            final String stripeTokenId = Objects.requireNonNull(stripeToken).getId();
+//
+//            final PaymentMethod.BillingDetails billingDetails;
+//            final String email = googlePayPaymentData.optString("email");
+//            if (googlePayBillingAddress != null) {
+//                final Address billingAddress = new Address.Builder()
+//                        .setLine1(googlePayBillingAddress.optString("address1"))
+//                        .setLine2(googlePayBillingAddress.optString("address2"))
+//                        .setCity(googlePayBillingAddress.optString("locality"))
+//                        .setState(googlePayBillingAddress.optString("administrativeArea"))
+//                        .setCountry(googlePayBillingAddress.optString("countryCode"))
+//                        .setPostalCode(googlePayBillingAddress.optString("postalCode"))
+//                        .build();
+//                billingDetails = new PaymentMethod.BillingDetails.Builder()
+//                        .setAddress(billingAddress)
+//                        .setName(googlePayBillingAddress.optString("name"))
+//                        .setEmail(email)
+//                        .setPhone(googlePayBillingAddress.optString("phoneNumber"))
+//                        .build();
+//            } else {
+//                billingDetails = new PaymentMethod.BillingDetails.Builder()
+//                        .setEmail(email)
+//                        .build();
+//            }
+
+//            return PaymentMethodCreateParams.create(
+//                    PaymentMethodCreateParams.Card.create(stripeTokenId),
+//                    billingDetails
+//            );
+        }
+    }
 
     public static class CardUtil {
         private static final String VALUE_CARD = "card";
