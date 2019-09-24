@@ -9,6 +9,7 @@ import com.stripe.android.model.Source;
 import com.stripe.android.model.SourceParams;
 import com.stripe.android.model.StripeMapUtil;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 
 import java.util.HashSet;
@@ -47,7 +48,7 @@ public class StripeApiPlugin implements MethodCallHandler {
     }
 
     @Override
-    public void onMethodCall(MethodCall call, final Result result) {
+    public void onMethodCall(MethodCall call, @NotNull final Result result) {
         if (call.method.equals("init")) {
             String publishableKey = call.argument("publishableKey");
             if (TextUtils.isEmpty(publishableKey)) {
