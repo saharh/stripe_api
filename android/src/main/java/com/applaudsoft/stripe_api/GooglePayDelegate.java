@@ -9,6 +9,7 @@ import com.google.android.gms.common.api.Status;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.wallet.AutoResolveHelper;
+import com.google.android.gms.wallet.CardInfo;
 import com.google.android.gms.wallet.IsReadyToPayRequest;
 import com.google.android.gms.wallet.PaymentData;
 import com.google.android.gms.wallet.PaymentDataRequest;
@@ -19,7 +20,6 @@ import com.google.android.gms.wallet.Wallet;
 import com.google.android.gms.wallet.WalletConstants;
 import com.stripe.android.GooglePayConfig;
 import com.stripe.android.model.Card;
-import com.stripe.android.model.PaymentMethodCreateParams;
 import com.stripe.android.model.StripeMapUtil;
 import com.stripe.android.model.Token;
 
@@ -67,13 +67,15 @@ public class GooglePayDelegate implements PluginRegistry.ActivityResultListener 
                 switch (resultCode) {
                     case Activity.RESULT_OK:
                         PaymentData paymentData = PaymentData.getFromIntent(data);
-                        try {
-                            JSONObject paymentDataJson = new JSONObject(paymentData.toJson());
-                            PaymentMethodCreateParams params = PaymentMethodCreateParams.createFromGooglePay(paymentDataJson);
-                            Map<String, Object> stringObjectMap = params.toParamMap();
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
+//                        try {
+//                            JSONObject paymentDataJson = new JSONObject(paymentData.toJson());
+//                            PaymentMethodCreateParams params = PaymentMethodCreateParams.createFromGooglePay(paymentDataJson);
+//                            Map<String, ?> paramsMap = params.toParamMap();
+//                            Map<String, ?> card = (Map<String, ?>) paramsMap.get("card");
+//                            String token = (String) card.get("token");
+//                        } catch (Exception e) {
+//                            e.printStackTrace();
+//                        }
                         // You can get some data on the user's card, such as the brand and last 4 digits
 //                        CardInfo info = paymentData.getCardInfo();
                         // You can also pull the user address from the PaymentData object.
