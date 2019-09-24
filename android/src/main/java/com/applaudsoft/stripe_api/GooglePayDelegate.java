@@ -19,6 +19,7 @@ import com.google.android.gms.wallet.Wallet;
 import com.google.android.gms.wallet.WalletConstants;
 import com.stripe.android.GooglePayConfig;
 import com.stripe.android.model.Card;
+import com.stripe.android.model.PaymentMethodCreateParams;
 import com.stripe.android.model.StripeMapUtil;
 import com.stripe.android.model.Token;
 
@@ -66,6 +67,13 @@ public class GooglePayDelegate implements PluginRegistry.ActivityResultListener 
                 switch (resultCode) {
                     case Activity.RESULT_OK:
                         PaymentData paymentData = PaymentData.getFromIntent(data);
+                        try {
+                            JSONObject paymentDataJson = new JSONObject(paymentData.toJson());
+                            PaymentMethodCreateParams params = PaymentMethodCreateParams.createFromGooglePay(paymentDataJson);
+                            Map<String, Object> stringObjectMap = params.toParamMap();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                         // You can get some data on the user's card, such as the brand and last 4 digits
 //                        CardInfo info = paymentData.getCardInfo();
                         // You can also pull the user address from the PaymentData object.
@@ -153,8 +161,8 @@ public class GooglePayDelegate implements PluginRegistry.ActivityResultListener 
         }
     }
 
-    public void cardFromGooglePay(boolean billingAddressRequired, final MethodChannel.Result result) {
-        PaymentDataRequest request = createPaymentDataRequest(billingAddressRequired);
+    public void cardFromGooglePay(boolean billingAddressRequired, Integer amount, final MethodChannel.Result result) {
+        PaymentDataRequest request = createPaymentDataRequest(billingAddressRequired, amount);
         if (request != null) {
             if (pendingResult != null) {
                 sendError("Request in progress", null, null);
@@ -169,7 +177,7 @@ public class GooglePayDelegate implements PluginRegistry.ActivityResultListener 
         }
     }
 
-    private PaymentDataRequest createPaymentDataRequest(boolean billingAddressRequired) {
+    private PaymentDataRequest createPaymentDataRequest(boolean billingAddressRequired, Integer amount) {
 
         try {
             final JSONObject tokenizationSpec = new GooglePayConfig(stripeApiKey).getTokenizationSpecification();
@@ -197,10 +205,15 @@ public class GooglePayDelegate implements PluginRegistry.ActivityResultListener 
                     .put("apiVersionMinor", 0)
                     .put("allowedPaymentMethods",
                             new JSONArray().put(cardPaymentMethod))
+//                    .put("transactionInfo", new JSONObject()
+////                            .put("totalPrice", "10.00")
+//                                    .put("totalPriceStatus", "NOT_CURRENTLY_KNOWN")
+//                                    .put("currencyCode", "USD")
+//                    )
                     .put("transactionInfo", new JSONObject()
-//                            .put("totalPrice", "10.00")
-                                    .put("totalPriceStatus", "NOT_CURRENTLY_KNOWN")
-                                    .put("currencyCode", "USD")
+                            .put("totalPrice", String.valueOf(amount))
+                            .put("totalPriceStatus", "ESTIMATED")
+                            .put("currencyCode", "USD")
                     )
                     .put("merchantInfo", new JSONObject()
                             .put("merchantName", "Wabi"))

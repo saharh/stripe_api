@@ -128,9 +128,12 @@ public class StripeApiPlugin implements MethodCallHandler {
         } else if (call.method.equals("isApplePayAvailable")) {
             result.success(false);
         } else if (call.method.equals("cardFromGooglePay")) { // returns {token: tokenId, card: stripeCard}
-            Boolean billingAddressRequired = call.arguments();
+            Map<String, ?> params = call.arguments();
+            Boolean billingAddressRequired = (Boolean) params.get("billing_address_required");
             billingAddressRequired = billingAddressRequired != null ? billingAddressRequired : false;
-            gpayDelegate.cardFromGooglePay(billingAddressRequired, result);
+            Integer amount = (Integer) params.get("amount");
+            amount = amount == null ? 1 : amount;
+            gpayDelegate.cardFromGooglePay(billingAddressRequired, amount, result);
         } else {
             result.notImplemented();
         }

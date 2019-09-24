@@ -42,8 +42,8 @@ class StripeFlutterPlugin {
     return await _channel.invokeMethod('isApplePayAvailable');
   }
 
-  static Future<Map> cardFromGooglePay() async {
-    Map<dynamic, dynamic> map = await _channel.invokeMethod('cardFromGooglePay');
+  static Future<Map> cardFromGooglePay([num amount]) async {
+    Map<dynamic, dynamic> map = await _channel.invokeMethod('cardFromGooglePay', {"amount": amount});
     if (map == null) {
       return null;
     }
@@ -120,8 +120,8 @@ class Stripe {
     return await StripeFlutterPlugin.isApplePayAvailable();
   }
 
-  Future<Map> cardFromGooglePay() async {
-    return await StripeFlutterPlugin.cardFromGooglePay();
+  Future<Map> cardFromGooglePay([num amount]) async {
+    return await StripeFlutterPlugin.cardFromGooglePay(amount);
   }
 
   Future<Map> cardFromApplePay([num amount]) async {
