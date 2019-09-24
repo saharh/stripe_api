@@ -123,8 +123,8 @@ class Stripe {
     return await StripeFlutterPlugin.isApplePayAvailable();
   }
 
-  Future<Map> cardFromGooglePay([num amount]) async {
-    return await StripeFlutterPlugin.cardFromGooglePay(amount);
+  Future<Map> cardFromGooglePay({bool requireBillingAddress, num amount}) async {
+    return await StripeFlutterPlugin.cardFromGooglePay(requireBillingAddress: requireBillingAddress, amount: amount);
   }
 
   Future<Map> cardFromApplePay([num amount]) async {
