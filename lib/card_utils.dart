@@ -124,7 +124,7 @@ class CardUtils {
       case StripeCard.DINERS_CLUB:
         return length == LENGTH_DINERS_CLUB;
       default:
-        return length == LENGTH_COMMON_CARD;
+        return length >= LENGTH_COMMON_CARD && length <= MAX_LENGTH_COMMON;
     }
   }
 
