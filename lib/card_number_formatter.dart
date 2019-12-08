@@ -11,7 +11,7 @@ class CardNumberFormatter extends TextInputFormatter {
   final ValueChanged<bool> onShowError;
 
   String _cardBrand;
-  int _lengthMax = 23;
+  int _lengthMax = 19;
   bool _isCardNumberValid = false;
 
   CardNumberFormatter({
@@ -133,8 +133,8 @@ List<String> separateCardNumberGroups(
   String brand,
 ) {
   //
-  if (spacelessCardNumber.length > 19) {
-    spacelessCardNumber = spacelessCardNumber.substring(0, 19);
+  if (spacelessCardNumber.length > 16) {
+    spacelessCardNumber = spacelessCardNumber.substring(0, 16);
   }
   //
   List<String> numberGroups;
@@ -162,7 +162,7 @@ List<String> separateCardNumberGroups(
       break;
     }
   } else {
-    numberGroups = List(5);
+    numberGroups = List(4);
     int i = 0;
     int previousStart = 0;
     while ((i + 1) * 4 < spacelessCardNumber.length) {
