@@ -45,6 +45,7 @@ class _MyAppState extends State<MyApp> {
                 new SizedBox(height: 12.0),
                 new TextField(
                   controller: controller,
+                  keyboardType: TextInputType.number,
                   inputFormatters: [
                     CardNumberFormatter(onCardBrandChanged: (brand) {
                       print('onCardBrandChanged : ' + brand);
