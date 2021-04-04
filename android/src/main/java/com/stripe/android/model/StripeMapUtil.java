@@ -100,7 +100,7 @@ public class StripeMapUtil {
             map.put(FIELD_ADDRESS_STATE, card.getAddressState());
             map.put(FIELD_ADDRESS_ZIP, card.getAddressZip());
             map.put(FIELD_ADDRESS_ZIP_CHECK, card.getAddressZipCheck());
-            map.put(FIELD_BRAND, card.getBrand());
+            map.put(FIELD_BRAND, card.getBrand() != null ? card.getBrand().getCode() : null);
             map.put(FIELD_CURRENCY, card.getCurrency());
             map.put(FIELD_COUNTRY, card.getCountry());
             map.put(FIELD_CUSTOMER, card.getCustomerId());
@@ -108,11 +108,11 @@ public class StripeMapUtil {
             map.put(FIELD_EXP_MONTH, card.getExpMonth());
             map.put(FIELD_EXP_YEAR, card.getExpYear());
             map.put(FIELD_FINGERPRINT, card.getFingerprint());
-            map.put(FIELD_FUNDING, card.getFunding());
+            map.put(FIELD_FUNDING, card.getFunding() != null ? card.getFunding().name() : null);
             map.put(FIELD_ID, card.getId());
             map.put(FIELD_LAST4, card.getLast4());
-            map.put(FIELD_TOKENIZATION_METHOD, card.getTokenizationMethod());
-            map.put(FIELD_METADATA, card.getMetadata());
+            map.put(FIELD_TOKENIZATION_METHOD, card.getTokenizationMethod() != null ? card.getTokenizationMethod().name() : null);
+//            map.put(FIELD_METADATA, card.getMetadata());
             map.put(FIELD_OBJECT, VALUE_CARD);
             removeNullAndEmptyParams(map);
             return map;
@@ -129,7 +129,7 @@ public class StripeMapUtil {
         private static final String FIELD_CURRENCY = "currency";
         private static final String FIELD_FLOW = "flow";
         private static final String FIELD_LIVEMODE = "livemode";
-        private static final String FIELD_METADATA = "metadata";
+//        private static final String FIELD_METADATA = "metadata";
         private static final String FIELD_OWNER = "owner";
         private static final String FIELD_RECEIVER = "receiver";
         private static final String FIELD_REDIRECT = "redirect";
@@ -156,7 +156,7 @@ public class StripeMapUtil {
             map.put(FIELD_CURRENCY, source.getCurrency());
             map.put(FIELD_FLOW, source.getFlow());
             map.put(FIELD_LIVEMODE, source.isLiveMode());
-            map.put(FIELD_METADATA, source.getMetaData());
+//            map.put(FIELD_METADATA, source.getMetaData());
 
             if (source.getOwner() != null) {
                 map.put(FIELD_OWNER, SourceOwnerUtil.toMap(source.getOwner()));
