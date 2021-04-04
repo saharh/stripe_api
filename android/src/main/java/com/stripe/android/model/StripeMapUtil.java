@@ -108,7 +108,7 @@ public class StripeMapUtil {
             map.put(FIELD_EXP_MONTH, card.getExpMonth());
             map.put(FIELD_EXP_YEAR, card.getExpYear());
             map.put(FIELD_FINGERPRINT, card.getFingerprint());
-            map.put(FIELD_FUNDING, card.getFunding() != null ? card.getFunding().name() : null);
+            map.put(FIELD_FUNDING, card.getFunding() != null ? card.getFunding().name().toLowerCase() : null);
             map.put(FIELD_ID, card.getId());
             map.put(FIELD_LAST4, card.getLast4());
             map.put(FIELD_TOKENIZATION_METHOD, card.getTokenizationMethod() != null ? card.getTokenizationMethod().name() : null);
