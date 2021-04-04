@@ -100,7 +100,7 @@ public class StripeMapUtil {
             map.put(FIELD_ADDRESS_STATE, card.getAddressState());
             map.put(FIELD_ADDRESS_ZIP, card.getAddressZip());
             map.put(FIELD_ADDRESS_ZIP_CHECK, card.getAddressZipCheck());
-            map.put(FIELD_BRAND, card.getBrand() != null ? card.getBrand().getCode() : null);
+            map.put(FIELD_BRAND, card.getBrand() != null ? card.getBrand().getDisplayName() : null);
             map.put(FIELD_CURRENCY, card.getCurrency());
             map.put(FIELD_COUNTRY, card.getCountry());
             map.put(FIELD_CUSTOMER, card.getCustomerId());
