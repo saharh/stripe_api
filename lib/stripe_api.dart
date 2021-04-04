@@ -42,7 +42,7 @@ class StripeFlutterPlugin {
     return await _channel.invokeMethod('isApplePayAvailable');
   }
 
-  static Future<Map> cardFromGooglePay({bool requireBillingAddress, num amount}) async {
+  static Future<Map> cardFromGooglePay({bool requireBillingAddress, double amount}) async {
     Map<dynamic, dynamic> map = await _channel.invokeMethod('cardFromGooglePay', {
       "amount": amount,
       "billing_address_required": requireBillingAddress,
@@ -123,7 +123,7 @@ class Stripe {
     return await StripeFlutterPlugin.isApplePayAvailable();
   }
 
-  Future<Map> cardFromGooglePay({bool requireBillingAddress, num amount}) async {
+  Future<Map> cardFromGooglePay({bool requireBillingAddress, double amount}) async {
     return await StripeFlutterPlugin.cardFromGooglePay(requireBillingAddress: requireBillingAddress, amount: amount);
   }
 
