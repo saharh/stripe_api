@@ -175,20 +175,21 @@ class CardUtils {
     if (possibleCardType == null || possibleCardType.trim().isEmpty) {
       return null;
     }
+    possibleCardType = possibleCardType.toLowerCase();
 
-    if (StripeCard.AMERICAN_EXPRESS == possibleCardType) {
+    if (StripeCard.AMERICAN_EXPRESS.toLowerCase() == possibleCardType) {
       return StripeCard.AMERICAN_EXPRESS;
-    } else if (StripeCard.MASTERCARD == possibleCardType) {
+    } else if (StripeCard.MASTERCARD.toLowerCase() == possibleCardType) {
       return StripeCard.MASTERCARD;
-    } else if (StripeCard.DINERS_CLUB == possibleCardType) {
+    } else if (StripeCard.DINERS_CLUB.toLowerCase() == possibleCardType) {
       return StripeCard.DINERS_CLUB;
-    } else if (StripeCard.DISCOVER == possibleCardType) {
+    } else if (StripeCard.DISCOVER.toLowerCase() == possibleCardType) {
       return StripeCard.DISCOVER;
-    } else if (StripeCard.JCB == possibleCardType) {
+    } else if (StripeCard.JCB.toLowerCase() == possibleCardType) {
       return StripeCard.JCB;
-    } else if (StripeCard.VISA == possibleCardType) {
+    } else if (StripeCard.VISA.toLowerCase() == possibleCardType) {
       return StripeCard.VISA;
-    } else if (StripeCard.UNIONPAY == possibleCardType) {
+    } else if (StripeCard.UNIONPAY.toLowerCase() == possibleCardType) {
       return StripeCard.UNIONPAY;
     } else {
       return StripeCard.UNKNOWN;
@@ -205,6 +206,7 @@ class CardUtils {
     if (possibleFundingType == null || possibleFundingType.trim().isEmpty) {
       return null;
     }
+    possibleFundingType = possibleFundingType.toLowerCase();
 
     if (StripeCard.FUNDING_CREDIT == possibleFundingType) {
       return StripeCard.FUNDING_CREDIT;
