@@ -131,7 +131,7 @@ public class StripeApiPlugin implements MethodCallHandler {
             Map<String, ?> params = call.arguments();
             Boolean billingAddressRequired = (Boolean) params.get("billing_address_required");
             billingAddressRequired = billingAddressRequired != null ? billingAddressRequired : false;
-            Integer amount = (Integer) params.get("amount");
+            Double amount = (Double) params.get("amount");
             amount = amount == null ? 1 : amount;
             gpayDelegate.cardFromGooglePay(billingAddressRequired, amount, result);
         } else {

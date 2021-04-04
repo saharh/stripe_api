@@ -164,7 +164,7 @@ public class GooglePayDelegate implements PluginRegistry.ActivityResultListener 
         }
     }
 
-    public void cardFromGooglePay(boolean billingAddressRequired, Integer amount, final MethodChannel.Result result) {
+    public void cardFromGooglePay(boolean billingAddressRequired, Double amount, final MethodChannel.Result result) {
         PaymentDataRequest request = createPaymentDataRequest(billingAddressRequired, amount);
         if (request != null) {
             if (pendingResult != null) {
@@ -180,7 +180,7 @@ public class GooglePayDelegate implements PluginRegistry.ActivityResultListener 
         }
     }
 
-    private PaymentDataRequest createPaymentDataRequest(boolean billingAddressRequired, Integer amount) {
+    private PaymentDataRequest createPaymentDataRequest(boolean billingAddressRequired, Double amount) {
 
         try {
             final JSONObject tokenizationSpec = new GooglePayConfig(stripeApiKey).getTokenizationSpecification();
