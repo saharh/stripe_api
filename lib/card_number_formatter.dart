@@ -7,7 +7,7 @@ import 'stripe_text_utils.dart';
 
 class CardNumberFormatter extends TextInputFormatter {
   final ValueChanged<String> onCardBrandChanged;
-  final VoidCallback onCardNumberComplete;
+  final void Function(String oldValue, String newValue) onCardNumberComplete;
   final ValueChanged<bool> onShowError;
 
   String _cardBrand;
@@ -28,9 +28,9 @@ class CardNumberFormatter extends TextInputFormatter {
       return newValue;
     }
 
-    if (newValue.text.length < 4) {
-      _updateCardBrandFromNumber(newValue.text);
-    }
+    // if (newValue.text.length < 4) {
+    _updateCardBrandFromNumber(newValue.text);
+    // }
 
     String spacelessNumber = removeSpacesAndHyphens(newValue.text);
     if (spacelessNumber == null) {
@@ -58,6 +58,11 @@ class CardNumberFormatter extends TextInputFormatter {
       selection = newValue.selection;
     }
 
+    var diff = newValue.text.length - oldValue.text.length;
+    if (diff >= 4) {
+      selection = TextSelection.fromPosition(TextPosition(offset: formattedNumber.length));
+    }
+
     final computedValue = newValue.copyWith(
       text: formattedNumber,
       composing: TextRange.empty,
@@ -71,7 +76,7 @@ class CardNumberFormatter extends TextInputFormatter {
         onShowError(!_isCardNumberValid);
       }
       if (!before && _isCardNumberValid && onCardNumberComplete != null) {
-        onCardNumberComplete();
+        onCardNumberComplete(oldValue.text, newValue.text);
       }
     } else {
       _isCardNumberValid = computedValue.text != null && CardUtils.isValidCardNumber(computedValue.text);
@@ -129,9 +134,9 @@ class CardNumberFormatter extends TextInputFormatter {
 ///  * [brand], to use as a separating scheme
 ///  Returns an array of strings with the number groups, in order. If the number is not complete, some of the array entries may be `null`
 List<String> separateCardNumberGroups(
-  String spacelessCardNumber,
-  String brand,
-) {
+    String spacelessCardNumber,
+    String brand,
+    ) {
   //
   if (spacelessCardNumber.length > 16) {
     spacelessCardNumber = spacelessCardNumber.substring(0, 16);
