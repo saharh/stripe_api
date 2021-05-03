@@ -4,6 +4,8 @@ import android.text.TextUtils;
 
 import com.stripe.android.ApiResultCallback;
 import com.stripe.android.Stripe;
+import com.stripe.android.StripeError;
+import com.stripe.android.exception.InvalidRequestException;
 import com.stripe.android.model.Card;
 import com.stripe.android.model.Source;
 import com.stripe.android.model.SourceParams;
@@ -96,8 +98,15 @@ public class StripeApiPlugin implements MethodCallHandler {
                 }
 
                 public void onError(@NonNull Exception error) {
+                    if (error instanceof InvalidRequestException) {
+                        StripeError stripeError = ((InvalidRequestException) error).getStripeError();
+                        if (stripeError != null) {
+                            result.error(stripeError.getCode(), stripeError.getMessage(), null);
+                            return;
+                        }
+                    }
                     String message = error.getMessage() != null ? error.getMessage() : error.toString();
-                    result.error(message, null, null);
+                    result.error(null, message, null);
                 }
             };
 
