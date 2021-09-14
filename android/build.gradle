@@ -4,18 +4,18 @@ version '1.0-SNAPSHOT'
 buildscript {
     repositories {
         google()
-        jcenter()
+        mavenCentral()
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.1.3'
+        classpath 'com.android.tools.build:gradle:7.0.2'
     }
 }
 
 rootProject.allprojects {
     repositories {
         google()
-        jcenter()
+        mavenCentral()
     }
 }
 
@@ -36,5 +36,5 @@ android {
 dependencies {
     implementation 'com.stripe:stripe-android:14.5.0'
 //    implementation 'com.stripe:stripe-android:16.4.3' // minsdk = 21 (currently 19), loses ~%1 of new paying users
-    implementation 'com.google.android.gms:play-services-wallet:18.1.2'
+    implementation 'com.google.android.gms:play-services-wallet:18.1.3'
 }

@@ -18,7 +18,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  final TextEditingController controller = new TextEditingController();
+  final TextEditingController controller = new CreditCardMaskedTextController();
 
   String brandName;
 
@@ -51,7 +51,7 @@ class _MyAppState extends State<MyApp> {
                       setState(() {
                         brandName = brand;
                       });
-                    }, onCardNumberComplete: () {
+                    }, onCardNumberComplete: (oldValue, newValue) {
                       print('onCardNumberComplete');
                     }, onShowError: (isError) {
                       print('Is card number valid ? ${!isError}');
@@ -150,7 +150,7 @@ class _MyAppState extends State<MyApp> {
     print(url);
 
     final response = await http.get(
-        Uri.parse(url),
+      Uri.parse(url),
       headers: _getHeaders(accessToken: _accessToken),
     );
 
@@ -164,7 +164,8 @@ class _MyAppState extends State<MyApp> {
     }
   }
 
-  Map<String, String> _getHeaders({String accessToken, String acceptType = ContentTypeJson, String contentType = ContentTypeJson}) {
+  Map<String, String> _getHeaders(
+      {String accessToken, String acceptType = ContentTypeJson, String contentType = ContentTypeJson}) {
     final Map<String, String> headers = new Map<String, String>();
     headers['Accept'] = acceptType;
     if (contentType != null) {

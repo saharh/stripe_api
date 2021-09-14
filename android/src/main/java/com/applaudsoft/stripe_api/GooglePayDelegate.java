@@ -38,7 +38,7 @@ import io.flutter.plugin.common.PluginRegistry;
 
 public class GooglePayDelegate implements PluginRegistry.ActivityResultListener {
 
-    private final Activity activity;
+    private Activity activity;
     private PaymentsClient paymentsClient;
     private String stripeApiKey;
 
@@ -54,8 +54,7 @@ public class GooglePayDelegate implements PluginRegistry.ActivityResultListener 
     private static final List<Integer> GPAY_ALLOWED_PAY_METHODS = Arrays.asList(WalletConstants.PAYMENT_METHOD_CARD, WalletConstants.PAYMENT_METHOD_TOKENIZED_CARD);
     private MethodChannel.Result pendingResult;
 
-
-    public GooglePayDelegate(Activity activity) {
+    public void setActivity(Activity activity) {
         this.activity = activity;
     }
 

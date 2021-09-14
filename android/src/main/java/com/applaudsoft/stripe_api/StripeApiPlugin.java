@@ -1,5 +1,6 @@
 package com.applaudsoft.stripe_api;
 
+import android.content.Context;
 import android.text.TextUtils;
 
 import com.stripe.android.ApiResultCallback;
@@ -18,6 +19,10 @@ import java.util.HashSet;
 import java.util.Map;
 
 import androidx.annotation.NonNull;
+
+import io.flutter.embedding.engine.plugins.FlutterPlugin;
+import io.flutter.embedding.engine.plugins.activity.ActivityAware;
+import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
@@ -27,26 +32,51 @@ import io.flutter.plugin.common.PluginRegistry.Registrar;
 /**
  * FlutterPlugin
  */
-public class StripeApiPlugin implements MethodCallHandler {
+public class StripeApiPlugin implements FlutterPlugin, MethodCallHandler, ActivityAware {
     private Stripe stripe;
-    private Registrar registrar;
     ApiResultCallback<Source> sourceCallback;
     private GooglePayDelegate gpayDelegate;
 
+    private MethodChannel channel;
+    private Context appContext;
 
-    public StripeApiPlugin(Registrar registrar, GooglePayDelegate gpayDelegate) {
-        this.registrar = registrar;
-        this.gpayDelegate = gpayDelegate;
+
+    @Override
+    public void onAttachedToEngine(@NonNull FlutterPlugin.FlutterPluginBinding flutterPluginBinding) {
+        channel = new MethodChannel(flutterPluginBinding.getBinaryMessenger(), "stripe_api");
+        channel.setMethodCallHandler(this);
+        appContext = flutterPluginBinding.getApplicationContext();
+        gpayDelegate = new GooglePayDelegate();
     }
 
-    /**
-     * Plugin registration.
-     */
-    public static void registerWith(Registrar registrar) {
-        final MethodChannel channel = new MethodChannel(registrar.messenger(), "stripe_api");
-        GooglePayDelegate gpayDelegate = new GooglePayDelegate(registrar.activity());
-        registrar.addActivityResultListener(gpayDelegate);
-        channel.setMethodCallHandler(new StripeApiPlugin(registrar, gpayDelegate));
+
+    @Override
+    public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
+        channel.setMethodCallHandler(null);
+        appContext = null;
+        gpayDelegate = null;
+    }
+
+
+    @Override
+    public void onAttachedToActivity(@NonNull ActivityPluginBinding binding) {
+        gpayDelegate.setActivity(binding.getActivity());
+        binding.addActivityResultListener(gpayDelegate);
+    }
+
+    @Override
+    public void onDetachedFromActivityForConfigChanges() {
+        gpayDelegate.setActivity(null);
+    }
+
+    @Override
+    public void onReattachedToActivityForConfigChanges(@NonNull ActivityPluginBinding binding) {
+        onAttachedToActivity(binding);
+    }
+
+    @Override
+    public void onDetachedFromActivity() {
+        gpayDelegate.setActivity(null);
     }
 
     @Override
@@ -58,7 +88,7 @@ public class StripeApiPlugin implements MethodCallHandler {
                 return;
             }
             gpayDelegate.setStripeApiKey(publishableKey);
-            stripe = new Stripe(registrar.activity(), publishableKey);
+            stripe = new Stripe(appContext, publishableKey);
             result.success(null);
         } else if (call.method.equals("createSourceFromCard")) {
             Map<String, ?> cardMap = call.arguments();

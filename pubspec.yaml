@@ -1,16 +1,15 @@
 name: stripe_api
 description: A library to itegrate stripe payment gateway in flutter app
 version: 1.2.0
-author: Muhammad Ahmed <mahmed8003@gmail.com>
-homepage: https://github.com/mahmed8003/stripe_api
+homepage: https://github.com/Techie-Qabila/stripe_api
 
 environment:
-  sdk: ">=2.0.0-dev.68.0 <3.0.0"
+  sdk: ">=2.1.0 <3.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
-  http: ^0.13.1
+  http: "^0.13.3"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://www.dartlang.org/tools/pub/pubspec
