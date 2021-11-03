@@ -39,12 +39,12 @@ class Token implements StripePaymentSource {
     this.card,
   });
 
-  factory Token(Map<String, dynamic> json) {
+  static Token fromJson(Map<String, dynamic> json) {
     String tokenId = optString(json, FIELD_ID);
-    int createdTimeStamp = optInteger(json, FIELD_CREATED);
-    bool liveMode = optBoolean(json, FIELD_LIVEMODE);
-    String tokenType = asTokenType(optString(json, FIELD_TYPE));
-    bool used = optBoolean(json, FIELD_USED);
+    int/*?*/ createdTimeStamp = optInteger(json, FIELD_CREATED);
+    bool/*?*/ liveMode = optBoolean(json, FIELD_LIVEMODE);
+    String/*?*/ tokenType = asTokenType(optString(json, FIELD_TYPE));
+    bool/*?*/ used = optBoolean(json, FIELD_USED);
 
     if (tokenId == null || createdTimeStamp == null || liveMode == null) {
       return null;
@@ -57,6 +57,7 @@ class Token implements StripePaymentSource {
       if (bankAccountObject == null) {
         return null;
       }
+      return null; // next was commented so return null
       //BankAccount bankAccount = BankAccount.fromJson(bankAccountObject);
       //token = new Token(tokenId, liveMode, date, used, bankAccount);
 

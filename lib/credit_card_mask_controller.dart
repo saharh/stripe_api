@@ -26,7 +26,7 @@ class CreditCardMaskedTextController extends TextEditingController {
   Map<String, RegExp> _translator;
   String _lastUpdatedText = '';
 
-  void _updateText(String text) {
+  void _updateText(String/*?*/ text) {
     if (text != null) {
       final cardType = CardUtils.getPossibleCardType(text, shouldNormalize: true);
       final mask = CARD_MASKS[cardType];

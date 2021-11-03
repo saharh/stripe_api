@@ -7,9 +7,9 @@ import 'stripe_json_model.dart';
 import 'stripe_payment_source.dart';
 
 class CustomerSource extends StripeJsonModel implements StripePaymentSource {
-  StripePaymentSource stripePaymentSource;
+  StripePaymentSource/*?*/ stripePaymentSource;
 
-  factory CustomerSource.fromJson(Map<dynamic, dynamic> json) {
+  static CustomerSource fromJson(Map<dynamic, dynamic> json) {
     String objectString = optString(json, "object");
     StripePaymentSource sourceObject;
     if (StripeCard.VALUE_CARD == objectString) {

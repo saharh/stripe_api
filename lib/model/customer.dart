@@ -52,7 +52,7 @@ class Customer extends StripeJsonModel {
       for (int i = 0; i < dataArray.length; i++) {
         try {
           var customerSourceObject = dataArray[i];
-          CustomerSource sourceData = new CustomerSource.fromJson(
+          CustomerSource sourceData = CustomerSource.fromJson(
               customerSourceObject.cast<String, dynamic>());
           if (sourceData == null ||
               VALUE_APPLE_PAY == sourceData.getTokenizationMethod()) {

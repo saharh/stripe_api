@@ -35,11 +35,11 @@ class StripeFlutterPlugin {
     return source;
   }
 
-  static Future<bool> isGooglePayAvailable() async {
+  static Future<bool/*!*/> isGooglePayAvailable() async {
     return await _channel.invokeMethod('isGooglePayAvailable');
   }
 
-  static Future<bool> isApplePayAvailable() async {
+  static Future<bool/*!*/> isApplePayAvailable() async {
     return await _channel.invokeMethod('isApplePayAvailable');
   }
 
@@ -99,7 +99,7 @@ class Stripe {
     }
   }
 
-  static Stripe get instance {
+  static Stripe/*!*/ get instance {
     if (_instance == null) {
       throw new Exception("Attempted to get instance of Stripe without initialization");
     }

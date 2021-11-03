@@ -53,7 +53,7 @@ class StripeApiHandler {
     final options = new RequestOptions(publishableApiKey: publishableKey);
     final response = await _getStripeResponse(RequestMethod.post, url, options,
         params: params);
-    final token = new Token(response);
+    final token = Token.fromJson(response);
     return token;
   }
 
@@ -272,7 +272,7 @@ class RequestOptions {
   static const String TYPE_QUERY = "source";
   static const String TYPE_JSON = "json_data";
 
-  final String apiVersion;
+  final String/*?*/ apiVersion;
   final String guid;
   final String idempotencyKey;
   final String publishableApiKey;
