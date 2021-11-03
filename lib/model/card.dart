@@ -100,36 +100,36 @@ class StripeCard extends StripeJsonModel implements StripePaymentSource {
   static const String FIELD_ID = "id";
   static const String FIELD_TOKENIZATION_METHOD = "tokenization_method";
 
-  String number;
-  String cvc;
-  int expMonth;
-  int expYear;
-  String name;
-  String addressLine1;
-  String addressLine1Check;
-  String addressLine2;
-  String addressCity;
-  String addressState;
-  String addressZip;
-  String addressZipCheck;
-  String addressCountry;
-  String last4;
-  String _brand;
-  String funding;
-  String fingerprint;
-  String country;
-  String currency;
-  String customerId;
-  String cvcCheck;
-  String id;
-  List<String> loggingTokens = [];
-  String tokenizationMethod;
+  String? number;
+  String? cvc;
+  int? expMonth;
+  int? expYear;
+  String? name;
+  String? addressLine1;
+  String? addressLine1Check;
+  String? addressLine2;
+  String? addressCity;
+  String? addressState;
+  String? addressZip;
+  String? addressZipCheck;
+  String? addressCountry;
+  String? last4;
+  String? _brand;
+  String? funding;
+  String? fingerprint;
+  String? country;
+  String? currency;
+  String? customerId;
+  String? cvcCheck;
+  String? id;
+  List<String>? loggingTokens = [];
+  String? tokenizationMethod;
 
   StripeCard({
-    @required this.number,
-    @required this.cvc,
-    @required this.expMonth,
-    @required this.expYear,
+    required this.number,
+    required this.cvc,
+    required this.expMonth,
+    required this.expYear,
     this.name,
     this.addressLine1,
     this.addressLine1Check,
@@ -140,7 +140,7 @@ class StripeCard extends StripeJsonModel implements StripePaymentSource {
     this.addressZipCheck,
     this.addressCountry,
     this.last4,
-    String brand,
+    String? brand,
     this.funding,
     this.fingerprint,
     this.country,
@@ -180,7 +180,7 @@ class StripeCard extends StripeJsonModel implements StripePaymentSource {
     tokenizationMethod = optString(json, FIELD_TOKENIZATION_METHOD);
   }
 
-  String get brand {
+  String? get brand {
     if (isBlank(_brand) && !isBlank(number)) {
       _brand = CardUtils.getPossibleCardType(number);
     }
@@ -258,7 +258,7 @@ class StripeCard extends StripeJsonModel implements StripePaymentSource {
     if (!validateExpYear(now)) {
       return false;
     }
-    return !ModelUtils.hasMonthPassed(expYear, expMonth, now);
+    return !ModelUtils.hasMonthPassed(expYear!, expMonth!, now);
   }
 
   @override

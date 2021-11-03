@@ -23,18 +23,18 @@ class SourceCardData extends StripeSourceTypeModel {
   static const String FIELD_THREE_D_SECURE = "three_d_secure";
   static const String FIELD_TOKENIZATION_METHOD = "tokenization_method";
 
-  String addressLine1Check;
-  String addressZipCheck;
-  String brand;
-  String country;
-  String cvcCheck;
-  String dynamicLast4;
-  int expiryMonth;
-  int expiryYear;
-  String funding;
-  String last4;
-  String threeDSecureStatus;
-  String tokenizationMethod;
+  String? addressLine1Check;
+  String? addressZipCheck;
+  String? brand;
+  String? country;
+  String? cvcCheck;
+  String? dynamicLast4;
+  int? expiryMonth;
+  int? expiryYear;
+  String? funding;
+  String? last4;
+  String? threeDSecureStatus;
+  String? tokenizationMethod;
 
   @override
   Map<String, dynamic> toMap() {

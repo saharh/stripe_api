@@ -10,7 +10,7 @@ const String NULL = "null";
  * @param fieldName the optional field name
  * @return the value stored in the field, or {@code null} if the field isn't present
  */
-String optString(Map<dynamic, dynamic> json, String fieldName) {
+String? optString(Map<dynamic, dynamic> json, String fieldName) {
   return nullIfNullOrEmpty(json[fieldName] ?? "");
 }
 
@@ -46,8 +46,8 @@ int optInteger(Map<dynamic, dynamic> json, String fieldName) {
  * @param fieldName the name of the field in which the country code is stored
  * @return a two-letter country code if one is found, or {@code null}
  */
-String optCountryCode(Map<dynamic, dynamic> json, String fieldName) {
-  String value = optString(json, fieldName);
+String? optCountryCode(Map<dynamic, dynamic> json, String fieldName) {
+  String? value = optString(json, fieldName);
   if (value != null && value.length == 2) {
     return value;
   }
@@ -63,8 +63,8 @@ String optCountryCode(Map<dynamic, dynamic> json, String fieldName) {
  * @return a three-letter currency code if one is found, or {@code null}
  */
 
-String optCurrency(Map<dynamic, dynamic> json, String fieldName) {
-  String value = optString(json, fieldName);
+String? optCurrency(Map<dynamic, dynamic> json, String fieldName) {
+  String? value = optString(json, fieldName);
   if (value != null && value.length == 3) {
     return value;
   }
@@ -72,7 +72,7 @@ String optCurrency(Map<dynamic, dynamic> json, String fieldName) {
 }
 
 ///
-String nullIfNullOrEmpty(String possibleNull) {
+String? nullIfNullOrEmpty(String possibleNull) {
   return ((NULL == possibleNull) || (EMPTY == possibleNull))
       ? null
       : possibleNull;

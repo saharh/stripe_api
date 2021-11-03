@@ -26,16 +26,16 @@ class EphemeralKey extends StripeJsonModel {
 
   static const String NULL = "null";
 
-  String _id;
-  int _created;
-  int _expires;
-  bool _liveMode;
-  String _customerId;
-  String _object;
-  String _secret;
-  String _type;
-  DateTime _createdAt;
-  DateTime _expiresAt;
+  String? _id;
+  int? _created;
+  int? _expires;
+  bool? _liveMode;
+  String? _customerId;
+  String? _object;
+  String? _secret;
+  String? _type;
+  DateTime? _createdAt;
+  DateTime? _expiresAt;
 
   EphemeralKey.fromJson(Map<dynamic, dynamic> json) {
     _id = optString(json, FIELD_ID);
@@ -46,29 +46,29 @@ class EphemeralKey extends StripeJsonModel {
     _type = json[FIELD_ASSOCIATED_OBJECTS][0][FIELD_TYPE];
     _object = optString(json, FIELD_OBJECT);
     _secret = optString(json, FIELD_SECRET);
-    _createdAt = new DateTime.fromMillisecondsSinceEpoch(_created);
-    _expiresAt = new DateTime.fromMillisecondsSinceEpoch(_expires);
+    _createdAt = new DateTime.fromMillisecondsSinceEpoch(_created!);
+    _expiresAt = new DateTime.fromMillisecondsSinceEpoch(_expires!);
   }
 
-  String get id => _id;
+  String? get id => _id;
 
-  int get created => _created;
+  int? get created => _created;
 
-  int get expires => _expires;
+  int? get expires => _expires;
 
-  String get customerId => _customerId;
+  String? get customerId => _customerId;
 
-  bool get liveMode => _liveMode;
+  bool? get liveMode => _liveMode;
 
-  String get object => _object;
+  String? get object => _object;
 
-  String get secret => _secret;
+  String? get secret => _secret;
 
-  String get type => _type;
+  String? get type => _type;
 
-  DateTime get createdAt => _createdAt;
+  DateTime? get createdAt => _createdAt;
 
-  DateTime get expiresAt => _expiresAt;
+  DateTime? get expiresAt => _expiresAt;
 
   @override
   Map<String, dynamic> toMap() {
@@ -90,7 +90,7 @@ class EphemeralKey extends StripeJsonModel {
 ///
 ///
 class EphemeralKeyManager {
-  EphemeralKey _ephemeralKey;
+  EphemeralKey? _ephemeralKey;
   final EphemeralKeyProvider ephemeralKeyProvider;
   final int timeBufferInSeconds;
 
@@ -99,7 +99,7 @@ class EphemeralKeyManager {
   ///
   ///
   ///
-  Future<EphemeralKey> retrieveEphemeralKey() async {
+  Future<EphemeralKey?> retrieveEphemeralKey() async {
     if (_shouldRefreshKey()) {
       String key;
       try {
@@ -138,7 +138,7 @@ class EphemeralKeyManager {
     }
 
     DateTime now = DateTime.now();
-    final diff = _ephemeralKey.expiresAt.difference(now).abs();
+    final diff = _ephemeralKey!.expiresAt!.difference(now).abs();
     return diff.inSeconds < timeBufferInSeconds;
   }
 }

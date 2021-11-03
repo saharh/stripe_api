@@ -8,9 +8,9 @@ class ShippingInformation extends StripeJsonModel {
   static const String FIELD_NAME = "name";
   static const String FIELD_PHONE = "phone";
 
-  Address address;
-  String name;
-  String phone;
+  Address? address;
+  String? name;
+  String? phone;
 
   ShippingInformation({
     this.address,

@@ -47,12 +47,12 @@ class StripeApiHandler {
   ///
   ///
   ///
-  Future<Token> createToken(
+  Future<Token?> createToken(
       Map<String, dynamic> params, String publishableKey) async {
     final url = "$LIVE_API_PATH/tokens";
     final options = new RequestOptions(publishableApiKey: publishableKey);
-    final response = await _getStripeResponse(RequestMethod.post, url, options,
-        params: params);
+    final response = await (_getStripeResponse(RequestMethod.post, url, options,
+        params: params) as FutureOr<Map<String, dynamic>>);
     final token = Token.fromJson(response);
     return token;
   }
@@ -60,10 +60,10 @@ class StripeApiHandler {
   ///
   ///
   ///
-  Future<Customer> retrieveCustomer(String customerId, String secret) async {
+  Future<Customer> retrieveCustomer(String? customerId, String? secret) async {
     final String url = "$LIVE_API_PATH/customers/$customerId";
     final options = new RequestOptions(publishableApiKey: secret);
-    final response = await _getStripeResponse(RequestMethod.get, url, options);
+    final response = await (_getStripeResponse(RequestMethod.get, url, options) as FutureOr<Map<String, dynamic>>);
     final customer = Customer.fromJson(response);
     return customer;
   }
@@ -72,15 +72,15 @@ class StripeApiHandler {
   ///
   ///
   Future<Source> addCustomerSource(
-      String customerId, String sourceId, String secret) async {
+      String? customerId, String sourceId, String? secret) async {
     final String url = "$LIVE_API_PATH/customers/$customerId/sources";
     final options = new RequestOptions(publishableApiKey: secret);
-    final response = await _getStripeResponse(
+    final response = await (_getStripeResponse(
       RequestMethod.post,
       url,
       options,
       params: {FIELD_SOURCE: sourceId},
-    );
+    ) as FutureOr<Map<String, dynamic>>);
     final source = Source.fromJson(response);
     return source;
   }
@@ -88,16 +88,16 @@ class StripeApiHandler {
   ///
   ///
   ///
-  Future<bool> deleteCustomerSource(
-      String customerId, String sourceId, String secret) async {
+  Future<bool?> deleteCustomerSource(
+      String? customerId, String sourceId, String? secret) async {
     final String url = "$LIVE_API_PATH/customers/$customerId/sources/$sourceId";
     final options = new RequestOptions(publishableApiKey: secret);
-    final response = await _getStripeResponse(
+    final response = await (_getStripeResponse(
       RequestMethod.delete,
       url,
       options,
-    );
-    final bool deleted = response["deleted"];
+    ) as FutureOr<Map<String, dynamic>>);
+    final bool? deleted = response["deleted"];
     return deleted;
   }
 
@@ -105,15 +105,15 @@ class StripeApiHandler {
   ///
   ///
   Future<Customer> updateCustomerDefaultSource(
-      String customerId, String sourceId, String secret) async {
+      String? customerId, String sourceId, String? secret) async {
     final String url = "$LIVE_API_PATH/customers/$customerId";
     final options = new RequestOptions(publishableApiKey: secret);
-    final response = await _getStripeResponse(
+    final response = await (_getStripeResponse(
       RequestMethod.post,
       url,
       options,
       params: {"default_source": sourceId},
-    );
+    ) as FutureOr<Map<String, dynamic>>);
     final customer = Customer.fromJson(response);
     return customer;
   }
@@ -121,16 +121,16 @@ class StripeApiHandler {
   ///
   ///
   ///
-  Future<Customer> updateCustomerShippingInformation(String customerId,
-      ShippingInformation shippingInfo, String secret) async {
+  Future<Customer> updateCustomerShippingInformation(String? customerId,
+      ShippingInformation shippingInfo, String? secret) async {
     final String url = "$LIVE_API_PATH/customers/$customerId";
     final options = new RequestOptions(publishableApiKey: secret);
-    final response = await _getStripeResponse(
+    final response = await (_getStripeResponse(
       RequestMethod.post,
       url,
       options,
       params: {"shipping": shippingInfo.toMap()},
-    );
+    ) as FutureOr<Map<String, dynamic>>);
     final customer = Customer.fromJson(response);
     return customer;
   }
@@ -138,9 +138,9 @@ class StripeApiHandler {
   ///
   ///
   ///
-  Future<Map<String, dynamic>> _getStripeResponse(
+  Future<Map<String, dynamic>?> _getStripeResponse(
       RequestMethod method, final String url, final RequestOptions options,
-      {final Map<String, dynamic> params}) async {
+      {final Map<String, dynamic>? params}) async {
     final headers = _headers(options: options);
 
     http.Response response;
@@ -151,19 +151,19 @@ class StripeApiHandler {
         if (params != null && params.length > 0) {
           fUrl = "$url?${_encodeMap(params)}";
         }
-        response = await _client.get(Uri.parse(fUrl), headers: headers);
+        response = await _client.get(Uri.parse(fUrl), headers: headers as Map<String, String>?);
         break;
 
       case RequestMethod.post:
         response = await _client.post(
           Uri.parse(url),
-          headers: headers,
+          headers: headers as Map<String, String>?,
           body: params != null ? _urlEncodeMap(params) : null,
         );
         break;
 
       case RequestMethod.delete:
-        response = await _client.delete(Uri.parse(url), headers: headers);
+        response = await _client.delete(Uri.parse(url), headers: headers as Map<String, String>?);
         break;
       default:
         throw new Exception("Request Method: $method not implemented");
@@ -172,7 +172,7 @@ class StripeApiHandler {
     final requestId = response.headers[HEADER_KEY_REQUEST_ID];
 
     final statusCode = response.statusCode;
-    Map<String, dynamic> resp;
+    Map<String, dynamic>? resp;
     try {
       resp = json.decode(response.body);
     } catch (error) {
@@ -182,7 +182,7 @@ class StripeApiHandler {
     }
 
     if (statusCode < 200 || statusCode >= 300) {
-      final Map<String, dynamic> errBody = resp[FIELD_ERROR];
+      final Map<String, dynamic> errBody = resp![FIELD_ERROR];
       final stripeError = StripeAPIError(requestId, errBody);
       throw new StripeAPIException(stripeError);
     } else {
@@ -193,8 +193,8 @@ class StripeApiHandler {
   ///
   ///
   ///
-  static Map<String, String> _headers({RequestOptions options}) {
-    final Map<String, String> headers = new Map();
+  static Map<String, String?> _headers({RequestOptions? options}) {
+    final Map<String, String?> headers = new Map();
     headers["Accept-Charset"] = CHARSET;
     headers["Accept"] = "application/json";
     headers["Content-Type"] = "application/x-www-form-urlencoded";
@@ -272,12 +272,12 @@ class RequestOptions {
   static const String TYPE_QUERY = "source";
   static const String TYPE_JSON = "json_data";
 
-  final String/*?*/ apiVersion;
-  final String guid;
-  final String idempotencyKey;
-  final String publishableApiKey;
-  final String requestType;
-  final String stripeAccount;
+  final String? apiVersion;
+  final String? guid;
+  final String? idempotencyKey;
+  final String? publishableApiKey;
+  final String? requestType;
+  final String? stripeAccount;
 
   RequestOptions({
     this.apiVersion = API_VERSION,

@@ -10,9 +10,9 @@ class SourceRedirect extends StripeJsonModel {
   static const String FIELD_STATUS = "status";
   static const String FIELD_URL = "url";
 
-  String returnUrl;
-  String status;
-  String url;
+  String? returnUrl;
+  String? status;
+  String? url;
 
   SourceRedirect({
     this.returnUrl,

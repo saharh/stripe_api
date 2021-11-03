@@ -6,11 +6,11 @@ import 'model/card.dart';
 import 'stripe_text_utils.dart';
 
 class CardNumberFormatter extends TextInputFormatter {
-  final ValueChanged<String> onCardBrandChanged;
-  final void Function(String oldValue, String newValue) onCardNumberComplete;
-  final ValueChanged<bool> onShowError;
+  final ValueChanged<String>? onCardBrandChanged;
+  final void Function(String oldValue, String newValue)? onCardNumberComplete;
+  final ValueChanged<bool>? onShowError;
 
-  String _cardBrand;
+  String? _cardBrand;
   int _lengthMax = 19;
   bool _isCardNumberValid = false;
 
@@ -32,12 +32,12 @@ class CardNumberFormatter extends TextInputFormatter {
     _updateCardBrandFromNumber(newValue.text);
     // }
 
-    String spacelessNumber = removeSpacesAndHyphens(newValue.text);
+    String? spacelessNumber = removeSpacesAndHyphens(newValue.text);
     if (spacelessNumber == null) {
       return newValue;
     }
 
-    List<String> cardParts = separateCardNumberGroups(spacelessNumber, _cardBrand);
+    List<String?> cardParts = separateCardNumberGroups(spacelessNumber, _cardBrand);
     String formattedNumber = '';
     for (int i = 0; i < cardParts.length; i++) {
       if (cardParts[i] == null) {
@@ -48,7 +48,7 @@ class CardNumberFormatter extends TextInputFormatter {
         formattedNumber += ' ';
       }
 
-      formattedNumber += cardParts[i];
+      formattedNumber += cardParts[i]!;
     }
 
     TextSelection selection;
@@ -73,16 +73,16 @@ class CardNumberFormatter extends TextInputFormatter {
       var before = _isCardNumberValid;
       _isCardNumberValid = CardUtils.isValidCardNumber(computedValue.text);
       if (onShowError != null) {
-        onShowError(!_isCardNumberValid);
+        onShowError!(!_isCardNumberValid);
       }
       if (!before && _isCardNumberValid && onCardNumberComplete != null) {
-        onCardNumberComplete(oldValue.text, newValue.text);
+        onCardNumberComplete!(oldValue.text, newValue.text);
       }
     } else {
-      _isCardNumberValid = computedValue.text != null && CardUtils.isValidCardNumber(computedValue.text);
+      _isCardNumberValid = CardUtils.isValidCardNumber(computedValue.text);
       // Don't show errors if we aren't full-length.
       if (onShowError != null) {
-        onShowError(false);
+        onShowError!(false);
       }
     }
 
@@ -97,7 +97,7 @@ class CardNumberFormatter extends TextInputFormatter {
     _cardBrand = brand;
 
     if (onCardBrandChanged != null) {
-      onCardBrandChanged(brand);
+      onCardBrandChanged!(brand);
     }
 
     _lengthMax = CardUtils.getLengthForBrand(brand);
@@ -108,9 +108,9 @@ class CardNumberFormatter extends TextInputFormatter {
   }
 
   static String formatCard(String cardNumber) {
-    String spacelessCardNumber = removeSpacesAndHyphens(cardNumber);
+    String spacelessCardNumber = removeSpacesAndHyphens(cardNumber)!;
     String cardBrand = CardUtils.getPossibleCardType(cardNumber);
-    List<String> cardParts = separateCardNumberGroups(spacelessCardNumber, cardBrand);
+    List<String?> cardParts = separateCardNumberGroups(spacelessCardNumber, cardBrand);
     String formattedNumber = '';
     for (int i = 0; i < cardParts.length; i++) {
       if (cardParts[i] == null) {
@@ -121,7 +121,7 @@ class CardNumberFormatter extends TextInputFormatter {
         formattedNumber += ' ';
       }
 
-      formattedNumber += cardParts[i];
+      formattedNumber += cardParts[i]!;
     }
     return formattedNumber;
   }
@@ -133,19 +133,19 @@ class CardNumberFormatter extends TextInputFormatter {
 ///  * [spacelessCardNumber], the raw card number, without spaces
 ///  * [brand], to use as a separating scheme
 ///  Returns an array of strings with the number groups, in order. If the number is not complete, some of the array entries may be `null`
-List<String> separateCardNumberGroups(
+List<String?> separateCardNumberGroups(
     String spacelessCardNumber,
-    String brand,
+    String? brand,
     ) {
   //
   if (spacelessCardNumber.length > 16) {
     spacelessCardNumber = spacelessCardNumber.substring(0, 16);
   }
   //
-  List<String> numberGroups;
+  List<String?> numberGroups;
   //
   if (brand == StripeCard.AMERICAN_EXPRESS) {
-    numberGroups = new List(3);
+    numberGroups = List.filled(3, null);
 
     int length = spacelessCardNumber.length;
     int lastUsedIndex = 0;
@@ -167,7 +167,7 @@ List<String> separateCardNumberGroups(
       break;
     }
   } else {
-    numberGroups = List(4);
+    numberGroups = List.filled(4, null);
     int i = 0;
     int previousStart = 0;
     while ((i + 1) * 4 < spacelessCardNumber.length) {

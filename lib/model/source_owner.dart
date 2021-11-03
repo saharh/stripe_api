@@ -14,14 +14,14 @@ class SourceOwner extends StripeJsonModel {
   static const String FIELD_VERIFIED_NAME = VERIFIED + FIELD_NAME;
   static const String FIELD_VERIFIED_PHONE = VERIFIED + FIELD_PHONE;
 
-  Address address;
-  String email;
-  String name;
-  String phone;
-  Address verifiedAddress;
-  String verifiedEmail;
-  String verifiedName;
-  String verifiedPhone;
+  Address? address;
+  String? email;
+  String? name;
+  String? phone;
+  Address? verifiedAddress;
+  String? verifiedEmail;
+  String? verifiedName;
+  String? verifiedPhone;
 
   SourceOwner({
     this.address,
@@ -57,13 +57,13 @@ class SourceOwner extends StripeJsonModel {
   Map<String, dynamic> toMap() {
     Map<String, dynamic> hashMap = new Map();
     if (address != null) {
-      hashMap[FIELD_ADDRESS] = address.toMap();
+      hashMap[FIELD_ADDRESS] = address!.toMap();
     }
     hashMap[FIELD_EMAIL] = email;
     hashMap[FIELD_NAME] = name;
     hashMap[FIELD_PHONE] = phone;
     if (verifiedAddress != null) {
-      hashMap[FIELD_VERIFIED_ADDRESS] = verifiedAddress.toMap();
+      hashMap[FIELD_VERIFIED_ADDRESS] = verifiedAddress!.toMap();
     }
     hashMap[FIELD_VERIFIED_EMAIL] = verifiedEmail;
     hashMap[FIELD_VERIFIED_NAME] = verifiedName;

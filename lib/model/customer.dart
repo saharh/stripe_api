@@ -21,15 +21,15 @@ class Customer extends StripeJsonModel {
 
   static const String VALUE_APPLE_PAY = "apple_pay";
 
-  String id;
+  String? id;
 
-  String defaultSource;
-  ShippingInformation shippingInformation;
+  String? defaultSource;
+  ShippingInformation? shippingInformation;
 
   List<CustomerSource> sources = [];
-  bool hasMore;
-  int totalCount;
-  String url;
+  bool? hasMore;
+  int? totalCount;
+  String? url;
 
   Customer.fromJson(Map<dynamic, dynamic> json) {
     id = optString(json, FIELD_ID);
@@ -40,19 +40,19 @@ class Customer extends StripeJsonModel {
           shipInfoObject.cast<String, dynamic>());
     }
 
-    final Map<String, dynamic> sources =
+    final Map<String, dynamic>? sources =
         json[FIELD_SOURCES].cast<String, dynamic>();
     if (sources != null && (VALUE_LIST == optString(sources, FIELD_OBJECT))) {
       hasMore = optBoolean(sources, FIELD_HAS_MORE);
       totalCount = optInteger(sources, FIELD_TOTAL_COUNT);
       url = optString(sources, FIELD_URL);
 
-      List<CustomerSource> sourceDataList = new List();
-      List dataArray = sources[FIELD_DATA] ?? new List();
+      List<CustomerSource> sourceDataList = <CustomerSource>[];
+      List dataArray = sources[FIELD_DATA] ?? [];
       for (int i = 0; i < dataArray.length; i++) {
         try {
           var customerSourceObject = dataArray[i];
-          CustomerSource sourceData = CustomerSource.fromJson(
+          CustomerSource? sourceData = CustomerSource.fromJson(
               customerSourceObject.cast<String, dynamic>());
           if (sourceData == null ||
               VALUE_APPLE_PAY == sourceData.getTokenizationMethod()) {

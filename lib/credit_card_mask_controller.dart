@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:stripe_api/stripe_api.dart';
 
 class CreditCardMaskedTextController extends TextEditingController {
-  CreditCardMaskedTextController({String text}) : super(text: text) {
+  CreditCardMaskedTextController({String? text}) : super(text: text) {
     this._translator = CreditCardMaskedTextController._getDefaultTranslator();
 
     this.addListener(() {
@@ -23,10 +23,10 @@ class CreditCardMaskedTextController extends TextEditingController {
     StripeCard.UNIONPAY: '0000 0000 0000 0000',
   };
 
-  Map<String, RegExp> _translator;
-  String _lastUpdatedText = '';
+  late Map<String, RegExp> _translator;
+  String? _lastUpdatedText = '';
 
-  void _updateText(String/*?*/ text) {
+  void _updateText(String? text) {
     if (text != null) {
       final cardType = CardUtils.getPossibleCardType(text, shouldNormalize: true);
       final mask = CARD_MASKS[cardType];
@@ -61,7 +61,7 @@ class CreditCardMaskedTextController extends TextEditingController {
     };
   }
 
-  String _applyMask(String mask, String value) {
+  String _applyMask(String? mask, String value) {
     String result = '';
 
     int maskCharIndex = 0;
@@ -69,7 +69,7 @@ class CreditCardMaskedTextController extends TextEditingController {
 
     while (true) {
       // if mask is ended, break.
-      if (maskCharIndex == mask.length) {
+      if (maskCharIndex == mask!.length) {
         break;
       }
 
@@ -91,7 +91,7 @@ class CreditCardMaskedTextController extends TextEditingController {
 
       // apply translator if match
       if (this._translator.containsKey(maskChar)) {
-        if (this._translator[maskChar].hasMatch(valueChar)) {
+        if (this._translator[maskChar]!.hasMatch(valueChar)) {
           result += valueChar;
           maskCharIndex += 1;
         }

@@ -65,24 +65,24 @@ class Source extends StripeJsonModel implements StripePaymentSource {
   static const String FIELD_USAGE = "usage";
 
   @override
-  String id;
-  int amount;
-  String clientSecret;
-  SourceCodeVerification codeVerification;
-  int created;
-  String currency;
-  String typeRaw;
-  String flow;
-  bool liveMode;
-  Map<String, String> metaData;
-  SourceOwner owner;
-  SourceReceiver receiver;
-  SourceRedirect redirect;
-  String status;
-  Map<dynamic, dynamic> sourceTypeData;
-  StripeSourceTypeModel sourceTypeModel;
-  String type;
-  String usage;
+  String? id;
+  int? amount;
+  String? clientSecret;
+  SourceCodeVerification? codeVerification;
+  int? created;
+  String? currency;
+  String? typeRaw;
+  String? flow;
+  bool? liveMode;
+  Map<String, String>? metaData;
+  SourceOwner? owner;
+  SourceReceiver? receiver;
+  SourceRedirect? redirect;
+  String? status;
+  Map<dynamic, dynamic>? sourceTypeData;
+  StripeSourceTypeModel? sourceTypeModel;
+  String? type;
+  String? usage;
 
   Source({
     this.id,
@@ -198,7 +198,7 @@ class Source extends StripeJsonModel implements StripePaymentSource {
     StripeJsonModel.putStripeJsonModelMapIfNotNull(
         hashMap, FIELD_REDIRECT, redirect);
 
-    hashMap[typeRaw] = sourceTypeData;
+    hashMap[typeRaw!] = sourceTypeData;
 
     hashMap[FIELD_STATUS] = status;
     hashMap[FIELD_TYPE] = typeRaw;
@@ -207,7 +207,7 @@ class Source extends StripeJsonModel implements StripePaymentSource {
     return hashMap;
   }
 
-  static String asSourceStatus(String sourceStatus) {
+  static String? asSourceStatus(String? sourceStatus) {
     if (PENDING == sourceStatus) {
       return PENDING;
     } else if (CHARGEABLE == sourceStatus) {
@@ -222,7 +222,7 @@ class Source extends StripeJsonModel implements StripePaymentSource {
     return null;
   }
 
-  static String asSourceType(String sourceType) {
+  static String? asSourceType(String? sourceType) {
     if (CARD == sourceType) {
       return CARD;
     } else if (THREE_D_SECURE == sourceType) {
@@ -248,7 +248,7 @@ class Source extends StripeJsonModel implements StripePaymentSource {
     return null;
   }
 
-  static String asUsage(String usage) {
+  static String? asUsage(String? usage) {
     if (REUSABLE == usage) {
       return REUSABLE;
     } else if (SINGLE_USE == usage) {
@@ -257,7 +257,7 @@ class Source extends StripeJsonModel implements StripePaymentSource {
     return null;
   }
 
-  static String asSourceFlow(String sourceFlow) {
+  static String? asSourceFlow(String? sourceFlow) {
     if (REDIRECT == sourceFlow) {
       return REDIRECT;
     } else if (RECEIVER == sourceFlow) {

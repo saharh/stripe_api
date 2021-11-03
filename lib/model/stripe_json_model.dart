@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 abstract class StripeJsonModel {
-  Map<String/*!*/, dynamic> toMap();
+  Map<String, dynamic> toMap();
 
   String toJsonString() {
     return json.encode(toMap());
@@ -13,7 +13,7 @@ abstract class StripeJsonModel {
   }
 
   static void putStripeJsonModelMapIfNotNull(Map<String, dynamic> upperLevelMap,
-      String key, StripeJsonModel jsonModel) {
+      String key, StripeJsonModel? jsonModel) {
     if (jsonModel == null) {
       return;
     }
@@ -21,12 +21,12 @@ abstract class StripeJsonModel {
   }
 
   static void putStripeJsonModelListIfNotNull(Map<String, dynamic> upperLevelMap,
-      String key, List<StripeJsonModel>/*?*/ jsonModelList) {
+      String key, List<StripeJsonModel>? jsonModelList) {
     if (jsonModelList == null) {
       return;
     }
 
-    List<Map<String, dynamic>> mapList = new List();
+    List<Map<String, dynamic>> mapList = <Map<String, dynamic>>[];
     for (int i = 0; i < jsonModelList.length; i++) {
       mapList.add(jsonModelList[i].toMap());
     }

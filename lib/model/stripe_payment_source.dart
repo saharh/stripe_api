@@ -1,3 +1,3 @@
 abstract class StripePaymentSource {
-  String get id;
+  String? get id;
 }

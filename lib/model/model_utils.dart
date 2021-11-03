@@ -20,7 +20,7 @@ class ModelUtils {
    * @return {@code true} if the input time has passed the specified current time,
    *  {@code false} otherwise.
    */
-  static bool hasMonthPassed(int year, int/*!*/ month, DateTime now) {
+  static bool hasMonthPassed(int year, int month, DateTime now) {
     if (hasYearPassed(year, now)) {
       return true;
     }

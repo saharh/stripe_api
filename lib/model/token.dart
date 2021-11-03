@@ -22,13 +22,13 @@ class Token implements StripePaymentSource {
   @override
   final String id;
 
-  final String type;
+  final String? type;
   final DateTime created;
   final bool liveMode;
-  final bool used;
+  final bool? used;
 
   //final BankAccount bankAccount;
-  final StripeCard card;
+  final StripeCard? card;
 
   Token._internal(
     this.id,
@@ -39,19 +39,19 @@ class Token implements StripePaymentSource {
     this.card,
   });
 
-  static Token fromJson(Map<String, dynamic> json) {
-    String tokenId = optString(json, FIELD_ID);
-    int/*?*/ createdTimeStamp = optInteger(json, FIELD_CREATED);
-    bool/*?*/ liveMode = optBoolean(json, FIELD_LIVEMODE);
-    String/*?*/ tokenType = asTokenType(optString(json, FIELD_TYPE));
-    bool/*?*/ used = optBoolean(json, FIELD_USED);
+  static Token? fromJson(Map<String, dynamic> json) {
+    String? tokenId = optString(json, FIELD_ID);
+    int? createdTimeStamp = optInteger(json, FIELD_CREATED);
+    bool? liveMode = optBoolean(json, FIELD_LIVEMODE);
+    String? tokenType = asTokenType(optString(json, FIELD_TYPE));
+    bool? used = optBoolean(json, FIELD_USED);
 
     if (tokenId == null || createdTimeStamp == null || liveMode == null) {
       return null;
     }
     DateTime date = new DateTime.fromMillisecondsSinceEpoch(2000);
 
-    Token token;
+    Token? token;
     if (Token.TYPE_BANK_ACCOUNT == tokenType) {
       final bankAccountObject = json[FIELD_BANK_ACCOUNT];
       if (bankAccountObject == null) {
@@ -82,7 +82,7 @@ class Token implements StripePaymentSource {
    * @return {@code null} if the input is blank or otherwise does not match a {@link TokenType},
    * else the appropriate {@link TokenType}.
    */
-  static String asTokenType(String possibleTokenType) {
+  static String? asTokenType(String? possibleTokenType) {
     if (possibleTokenType == null || possibleTokenType.trim().isEmpty) {
       return null;
     }

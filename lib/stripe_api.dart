@@ -24,27 +24,27 @@ export 'model/token.dart';
 class StripeFlutterPlugin {
   static const MethodChannel _channel = const MethodChannel('stripe_api');
 
-  static Future<void> init(String publishableKey, {String appleMerchantIdentifier}) async {
+  static Future<void> init(String publishableKey, {String? appleMerchantIdentifier}) async {
     await _channel.invokeMethod('init', {"publishableKey": publishableKey, "appleMerchantIdentifier": appleMerchantIdentifier});
   }
 
   static Future<Source> createSourceFromCard(StripeCard card) async {
     final Map<String, dynamic> cardMap = card.toMap();
-    Map<dynamic, dynamic> sourceMap = await _channel.invokeMethod('createSourceFromCard', cardMap);
+    Map<dynamic, dynamic> sourceMap = await (_channel.invokeMethod('createSourceFromCard', cardMap) as FutureOr<Map<dynamic, dynamic>>);
     Source source = Source.fromJson(sourceMap);
     return source;
   }
 
-  static Future<bool/*!*/> isGooglePayAvailable() async {
-    return await _channel.invokeMethod('isGooglePayAvailable');
+  static Future<bool> isGooglePayAvailable() async {
+    return await (_channel.invokeMethod('isGooglePayAvailable') as FutureOr<bool>);
   }
 
-  static Future<bool/*!*/> isApplePayAvailable() async {
-    return await _channel.invokeMethod('isApplePayAvailable');
+  static Future<bool> isApplePayAvailable() async {
+    return await (_channel.invokeMethod('isApplePayAvailable') as FutureOr<bool>);
   }
 
-  static Future<Map> cardFromGooglePay({bool requireBillingAddress, double amount}) async {
-    Map<dynamic, dynamic> map = await _channel.invokeMethod('cardFromGooglePay', {
+  static Future<Map?> cardFromGooglePay({bool? requireBillingAddress, double? amount}) async {
+    Map<dynamic, dynamic>? map = await _channel.invokeMethod('cardFromGooglePay', {
       "amount": amount,
       "billing_address_required": requireBillingAddress,
     });
@@ -56,8 +56,8 @@ class StripeFlutterPlugin {
     return map;
   }
 
-  static Future<Map> cardFromApplePay([num amount]) async {
-    Map<dynamic, dynamic> map = await _channel.invokeMethod('cardFromApplePay', {"amount": amount});
+  static Future<Map?> cardFromApplePay([num? amount]) async {
+    Map<dynamic, dynamic>? map = await _channel.invokeMethod('cardFromApplePay', {"amount": amount});
     if (map == null) {
       return null;
     }
@@ -66,8 +66,8 @@ class StripeFlutterPlugin {
     return map;
   }
 
-  static Future<Source> createSourceFromAliPay({String currency, String name, String email, String returnUrl}) async {
-    Map<dynamic, dynamic> sourceMap =
+  static Future<Source?> createSourceFromAliPay({String? currency, String? name, String? email, String? returnUrl}) async {
+    Map<dynamic, dynamic>? sourceMap =
         await _channel.invokeMethod('createSourceFromAliPay', {"currency": currency, "name": name, "email": email, "return_url": returnUrl});
     if (sourceMap == null) {
       return null;
@@ -82,35 +82,35 @@ class StripeFlutterPlugin {
 }
 
 class Stripe {
-  static Stripe _instance;
+  static Stripe? _instance;
 
   final StripeApiHandler _apiHandler = new StripeApiHandler();
 
   final String publishableKey;
-  String stripeAccount;
+  String? stripeAccount;
 
   Stripe._internal(this.publishableKey);
 
-  static void init(String publishableKey, {String appleMerchantIdentifier}) async {
+  static void init(String publishableKey, {String? appleMerchantIdentifier}) async {
     if (_instance == null) {
       _validateKey(publishableKey);
       _instance = new Stripe._internal(publishableKey);
-      await _instance.initStripe(appleMerchantIdentifier: appleMerchantIdentifier);
+      await _instance!.initStripe(appleMerchantIdentifier: appleMerchantIdentifier);
     }
   }
 
-  static Stripe/*!*/ get instance {
+  static Stripe get instance {
     if (_instance == null) {
       throw new Exception("Attempted to get instance of Stripe without initialization");
     }
-    return _instance;
+    return _instance!;
   }
 
   Future<Source> createCardSource(StripeCard card) async {
     return await StripeFlutterPlugin.createSourceFromCard(card);
   }
 
-  Future<Token> createCardToken(StripeCard card) async {
+  Future<Token?> createCardToken(StripeCard card) async {
     final cardMap = card.toMap();
     final token = await _apiHandler.createToken(<String, dynamic>{Token.TYPE_CARD: cardMap}, publishableKey);
     return token;
@@ -124,15 +124,15 @@ class Stripe {
     return await StripeFlutterPlugin.isApplePayAvailable();
   }
 
-  Future<Map> cardFromGooglePay({bool requireBillingAddress, double amount}) async {
+  Future<Map?> cardFromGooglePay({bool? requireBillingAddress, double? amount}) async {
     return await StripeFlutterPlugin.cardFromGooglePay(requireBillingAddress: requireBillingAddress, amount: amount);
   }
 
-  Future<Map> cardFromApplePay([num amount]) async {
+  Future<Map?> cardFromApplePay([num? amount]) async {
     return await StripeFlutterPlugin.cardFromApplePay(amount);
   }
 
-  Future<Source> createSourceFromAliPay({String currency, String name, String email, String returnUrl}) async {
+  Future<Source?> createSourceFromAliPay({String? currency, String? name, String? email, String? returnUrl}) async {
     return await StripeFlutterPlugin.createSourceFromAliPay(currency: currency, name: name, email: email, returnUrl: returnUrl);
   }
 
@@ -140,7 +140,7 @@ class Stripe {
     return await StripeFlutterPlugin.dismissPaymentAuth(success);
   }
 
-  Future<Token> createBankAccountToken(StripeCard card) async {
+  Future<Token?> createBankAccountToken(StripeCard card) async {
     return null;
   }
 
@@ -159,7 +159,7 @@ class Stripe {
     }
   }
 
-  Future initStripe({String appleMerchantIdentifier}) async {
+  Future initStripe({String? appleMerchantIdentifier}) async {
     StripeFlutterPlugin.init(this.publishableKey, appleMerchantIdentifier: appleMerchantIdentifier);
   }
 }
@@ -167,7 +167,7 @@ class Stripe {
 class CustomerSession {
   static final int KEY_REFRESH_BUFFER_IN_SECONDS = 30;
 
-  static CustomerSession _instance;
+  static CustomerSession? _instance;
 
   final StripeApiHandler _apiHandler = new StripeApiHandler();
 
@@ -196,7 +196,7 @@ class CustomerSession {
   ///
   ///
   ///
-  static CustomerSession get instance {
+  static CustomerSession? get instance {
     if (_instance == null) {
       throw new Exception("Attempted to get instance of CustomerSession without initialization.");
     }
@@ -207,7 +207,7 @@ class CustomerSession {
   ///
   ///
   Future<Customer> retrieveCurrentCustomer() async {
-    final key = await _keyManager.retrieveEphemeralKey();
+    final key = await (_keyManager.retrieveEphemeralKey() as FutureOr<EphemeralKey>);
     final customer = await _apiHandler.retrieveCustomer(key.customerId, key.secret);
     return customer;
   }
@@ -216,7 +216,7 @@ class CustomerSession {
   ///
   ///
   Future<Source> addCustomerSource(String sourceId) async {
-    final key = await _keyManager.retrieveEphemeralKey();
+    final key = await (_keyManager.retrieveEphemeralKey() as FutureOr<EphemeralKey>);
     final source = await _apiHandler.addCustomerSource(key.customerId, sourceId, key.secret);
     return source;
   }
@@ -224,8 +224,8 @@ class CustomerSession {
   ///
   ///
   ///
-  Future<bool> deleteCustomerSource(String sourceId) async {
-    final key = await _keyManager.retrieveEphemeralKey();
+  Future<bool?> deleteCustomerSource(String sourceId) async {
+    final key = await (_keyManager.retrieveEphemeralKey() as FutureOr<EphemeralKey>);
     final deleted = await _apiHandler.deleteCustomerSource(key.customerId, sourceId, key.secret);
     return deleted;
   }
@@ -234,7 +234,7 @@ class CustomerSession {
   ///
   ///
   Future<Customer> updateCustomerDefaultSource(String sourceId) async {
-    final key = await _keyManager.retrieveEphemeralKey();
+    final key = await (_keyManager.retrieveEphemeralKey() as FutureOr<EphemeralKey>);
     final customer = await _apiHandler.updateCustomerDefaultSource(key.customerId, sourceId, key.secret);
     return customer;
   }
@@ -243,7 +243,7 @@ class CustomerSession {
   ///
   ///
   Future<Customer> updateCustomerShippingInformation(ShippingInformation shippingInfo) async {
-    final key = await _keyManager.retrieveEphemeralKey();
+    final key = await (_keyManager.retrieveEphemeralKey() as FutureOr<EphemeralKey>);
     final customer = await _apiHandler.updateCustomerShippingInformation(key.customerId, shippingInfo, key.secret);
     return customer;
   }

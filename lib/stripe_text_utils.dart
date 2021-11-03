@@ -7,7 +7,7 @@ const String HEX_ARRAY = "0123456789ABCDEF";
 /// @param value an input string that may or may not be entirely whitespace
 /// @return {@code null} if the string is entirely whitespace, otherwise the input value
 ///
-String nullIfBlank(String value) {
+String? nullIfBlank(String value) {
   if (isBlank(value)) {
     return null;
   }
@@ -22,7 +22,7 @@ String nullIfBlank(String value) {
  * @param value a possibly blank input string value
  * @return {@code true} if and only if the value is all whitespace, {@code null}, or empty
  */
-bool isBlank(String value) {
+bool isBlank(String? value) {
   return value == null || value.trim().length == 0;
 }
 
@@ -34,11 +34,11 @@ bool isBlank(String value) {
  * @return the input number minus any spaces, for instance "4242424242424242".
  * Returns {@code null} if the input was {@code null} or all spaces.
  */
-String removeSpacesAndHyphens(String cardNumberWithSpaces) {
+String? removeSpacesAndHyphens(String? cardNumberWithSpaces) {
   if (isBlank(cardNumberWithSpaces)) {
     return null;
   }
-  return cardNumberWithSpaces.replaceAll(new RegExp(r"\s+|\-+"), "");
+  return cardNumberWithSpaces!.replaceAll(new RegExp(r"\s+|\-+"), "");
 }
 
 /**
@@ -48,7 +48,7 @@ String removeSpacesAndHyphens(String cardNumberWithSpaces) {
  * @param prefixes the prefixes to test against
  * @return {@code true} if number begins with any of the input prefixes
  */
-bool hasAnyPrefix(String number, List<String> prefixes) {
+bool hasAnyPrefix(String? number, List<String> prefixes) {
   if (number == null) {
     return false;
   }

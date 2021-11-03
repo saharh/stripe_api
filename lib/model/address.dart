@@ -10,12 +10,12 @@ class Address extends StripeJsonModel {
   static const String FIELD_POSTAL_CODE = "postal_code";
   static const String FIELD_STATE = "state";
 
-  String city;
-  String country;
-  String line1;
-  String line2;
-  String postalCode;
-  String state;
+  String? city;
+  String? country;
+  String? line1;
+  String? line2;
+  String? postalCode;
+  String? state;
 
   Address({
     this.city,

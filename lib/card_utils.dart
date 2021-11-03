@@ -21,21 +21,21 @@ class CardUtils {
    * @param cardNumber a String that may or may not represent a valid card number
    * @return {@code true} if and only if the input value is a valid card number
    */
-  static bool isValidCardNumber(String cardNumber) {
-    String normalizedNumber = removeSpacesAndHyphens(cardNumber);
+  static bool isValidCardNumber(String? cardNumber) {
+    String? normalizedNumber = removeSpacesAndHyphens(cardNumber);
     return isValidLuhnNumber(normalizedNumber) && isValidCardLength(normalizedNumber);
   }
 
-  static bool isValidExpMonth(int expMonth) {
+  static bool isValidExpMonth(int? expMonth) {
     return expMonth != null && expMonth >= 1 && expMonth <= 12;
   }
 
-  static bool isValidExpYear(int expYear, {DateTime now}) {
+  static bool isValidExpYear(int? expYear, {DateTime? now}) {
     now = now ?? DateTime.now();
     return expYear != null && !ModelUtils.hasYearPassed(expYear, now);
   }
 
-  static bool isValidExpiryDate(int expYear, int expMonth, {DateTime now}) {
+  static bool isValidExpiryDate(int? expYear, int? expMonth, {DateTime? now}) {
     now = now ?? DateTime.now();
     if (!isValidExpMonth(expMonth)) {
       return false;
@@ -43,15 +43,15 @@ class CardUtils {
     if (!isValidExpYear(expYear)) {
       return false;
     }
-    return !ModelUtils.hasMonthPassed(expYear, expMonth, now);
+    return !ModelUtils.hasMonthPassed(expYear!, expMonth!, now);
   }
 
-  static bool isValidCVC(String cvc, String brand) {
+  static bool isValidCVC(String? cvc, String? brand) {
     if (isBlank(cvc)) {
       return false;
     }
-    String cvcValue = cvc.trim();
-    String updatedType = brand;
+    String cvcValue = cvc!.trim();
+    String? updatedType = brand;
     bool validLength = (updatedType == null && cvcValue.length >= 3 && cvcValue.length <= 4) ||
         (StripeCard.AMERICAN_EXPRESS == updatedType && cvcValue.length == 4) ||
         cvcValue.length == 3;
@@ -70,7 +70,7 @@ class CardUtils {
    * @param cardNumber a String that may or may not represent a valid Luhn number
    * @return {@code true} if and only if the input value is a valid Luhn number
    */
-  static bool isValidLuhnNumber(String cardNumber) {
+  static bool isValidLuhnNumber(String? cardNumber) {
     if (cardNumber == null) {
       return false;
     }
@@ -84,7 +84,10 @@ class CardUtils {
         return false;
       }
 
-      int digitInteger = getNumericValue(c);
+      int? digitInteger = getNumericValue(c);
+      if (digitInteger == null) {
+        continue;
+      }
       isOdd = !isOdd;
 
       if (isOdd) {
@@ -109,7 +112,7 @@ class CardUtils {
    * @param cardBrand a {@link CardBrand} used to get the correct size
    * @return {@code true} if the card number is the correct length for the assumed brand
    */
-  static bool isValidCardLength(String cardNumber, {String cardBrand}) {
+  static bool isValidCardLength(String? cardNumber, {String? cardBrand}) {
     if (cardBrand == null) {
       cardBrand = getPossibleCardType(cardNumber, shouldNormalize: false);
     }
@@ -128,12 +131,12 @@ class CardUtils {
     }
   }
 
-  static String getPossibleCardType(String cardNumber, {bool shouldNormalize = true}) {
+  static String getPossibleCardType(String? cardNumber, {bool shouldNormalize = true}) {
     if (isBlank(cardNumber)) {
       return StripeCard.UNKNOWN;
     }
 
-    String spacelessCardNumber = cardNumber;
+    String? spacelessCardNumber = cardNumber;
     if (shouldNormalize) {
       spacelessCardNumber = removeSpacesAndHyphens(cardNumber);
     }
@@ -171,7 +174,7 @@ class CardUtils {
    * @param possibleCardType a String that might match a {@link CardBrand} or be empty.
    * @return {@code null} if the input is blank, else the appropriate {@link CardBrand}.
    */
-  static String asCardBrand(String possibleCardType) {
+  static String? asCardBrand(String? possibleCardType) {
     if (possibleCardType == null || possibleCardType.trim().isEmpty) {
       return null;
     }
@@ -202,7 +205,7 @@ class CardUtils {
    * @param possibleFundingType a String that might match a {@link FundingType} or be empty
    * @return {@code null} if the input is blank, else the appropriate {@link FundingType}
    */
-  static String asFundingType(String possibleFundingType) {
+  static String? asFundingType(String? possibleFundingType) {
     if (possibleFundingType == null || possibleFundingType.trim().isEmpty) {
       return null;
     }
