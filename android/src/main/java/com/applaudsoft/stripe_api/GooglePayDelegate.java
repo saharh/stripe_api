@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 
 import androidx.annotation.NonNull;
+
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.PluginRegistry;
 
@@ -313,8 +314,8 @@ public class GooglePayDelegate implements PluginRegistry.ActivityResultListener 
             paymentsClient = Wallet.getPaymentsClient(activity,
                     new Wallet.WalletOptions.Builder()
 //                        .setEnvironment(WalletConstants.ENVIRONMENT_TEST)
-                        .setEnvironment(WalletConstants.ENVIRONMENT_PRODUCTION)
-//                        .setEnvironment(BuildConfig.DEBUG ? WalletConstants.ENVIRONMENT_TEST : WalletConstants.ENVIRONMENT_PRODUCTION)
+//                            .setEnvironment(WalletConstants.ENVIRONMENT_PRODUCTION)
+                        .setEnvironment(BuildConfig.DEBUG ? WalletConstants.ENVIRONMENT_TEST : WalletConstants.ENVIRONMENT_PRODUCTION)
                             .build());
         }
         return paymentsClient;
@@ -322,7 +323,12 @@ public class GooglePayDelegate implements PluginRegistry.ActivityResultListener 
 
     private void sendSuccess(Object o) {
         if (pendingResult != null) {
-            pendingResult.success(o);
+            try {
+                pendingResult.success(o);
+            } catch (Exception e) {
+                String message = e.getMessage() != null ? e.getMessage() : e.toString();
+                pendingResult.error(null, message, null);
+            }
         }
         pendingResult = null;
     }

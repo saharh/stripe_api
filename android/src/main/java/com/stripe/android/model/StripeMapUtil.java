@@ -154,7 +154,9 @@ public class StripeMapUtil {
 
             map.put(FIELD_CREATED, source.getCreated());
             map.put(FIELD_CURRENCY, source.getCurrency());
-            map.put(FIELD_FLOW, source.getFlow());
+            if (source.getFlow() != null) {
+                map.put(FIELD_FLOW, source.getFlow().toString());
+            }
             map.put(FIELD_LIVEMODE, source.isLiveMode());
 //            map.put(FIELD_METADATA, source.getMetaData());
 
@@ -172,9 +174,13 @@ public class StripeMapUtil {
 
             map.put(source.getTypeRaw(), source.getSourceTypeData());
 
-            map.put(FIELD_STATUS, source.getStatus());
+            if (source.getStatus() != null) {
+                map.put(FIELD_STATUS, source.getStatus().toString());
+            }
             map.put(FIELD_TYPE, source.getTypeRaw());
-            map.put(FIELD_USAGE, source.getUsage());
+            if (source.getUsage() != null) {
+                map.put(FIELD_USAGE, source.getUsage().toString());
+            }
             removeNullAndEmptyParams(map);
             return map;
         }

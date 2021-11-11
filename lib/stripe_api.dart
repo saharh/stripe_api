@@ -30,9 +30,8 @@ class StripeFlutterPlugin {
 
   static Future<Source> createSourceFromCard(StripeCard card) async {
     final Map<String, dynamic> cardMap = card.toMap();
-    Map<dynamic, dynamic> sourceMap = await (_channel.invokeMethod('createSourceFromCard', cardMap) as FutureOr<Map<dynamic, dynamic>>);
-    Source source = Source.fromJson(sourceMap);
-    return source;
+    Map<dynamic, dynamic> sourceMap = await _channel.invokeMethod('createSourceFromCard', cardMap);
+    return Source.fromJson(sourceMap);
   }
 
   static Future<bool> isGooglePayAvailable() async {

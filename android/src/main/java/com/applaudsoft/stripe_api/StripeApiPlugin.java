@@ -129,7 +129,12 @@ public class StripeApiPlugin implements FlutterPlugin, MethodCallHandler, Activi
                 public void onSuccess(@NonNull Source source) {
                     Map<String, Object> map = StripeMapUtil.SourceUtil.toMap(source);
                     removeNullAndEmptyParamsIncl(map);
-                    result.success(map);
+                    try {
+                        result.success(map);
+                    } catch (Exception e) {
+                        String message = e.getMessage() != null ? e.getMessage() : e.toString();
+                        result.error(null, message, null);
+                    }
                 }
 
                 public void onError(@NonNull Exception error) {
@@ -151,7 +156,12 @@ public class StripeApiPlugin implements FlutterPlugin, MethodCallHandler, Activi
                 public void onSuccess(@NonNull Source source) {
                     Map<String, Object> map = StripeMapUtil.SourceUtil.toMap(source);
                     removeNullAndEmptyParamsIncl(map);
-                    result.success(map);
+                    try {
+                        result.success(map);
+                    } catch (Exception e) {
+                        String message = e.getMessage() != null ? e.getMessage() : e.toString();
+                        result.error(null, message, null);
+                    }
                 }
 
                 public void onError(@NonNull Exception error) {
