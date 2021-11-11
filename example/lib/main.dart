@@ -27,6 +27,7 @@ class _MyAppState extends State<MyApp> {
     super.initState();
     Stripe.init('pk_test_oPkqhExHOa16kgTdguOv5xpS', appleMerchantIdentifier: "merchant_id");
     this.brandName = '';
+    availabilityChecks();
   }
 
   @override
@@ -241,6 +242,10 @@ class _MyAppState extends State<MyApp> {
     debugPrint('cardNumber: $cardNumber');
     debugPrint('cardNumber brand: $brand');
     debugPrint('cardNumber formatted: $formatted');
+  }
+
+  void availabilityChecks() async {
+    bool gpAvail = await Stripe.instance.isGooglePayAvailable();
   }
 }
 

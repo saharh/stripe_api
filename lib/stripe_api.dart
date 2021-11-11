@@ -36,11 +36,11 @@ class StripeFlutterPlugin {
   }
 
   static Future<bool> isGooglePayAvailable() async {
-    return await (_channel.invokeMethod('isGooglePayAvailable') as FutureOr<bool>);
+    return await _channel.invokeMethod('isGooglePayAvailable');
   }
 
   static Future<bool> isApplePayAvailable() async {
-    return await (_channel.invokeMethod('isApplePayAvailable') as FutureOr<bool>);
+    return await _channel.invokeMethod('isApplePayAvailable');
   }
 
   static Future<Map?> cardFromGooglePay({bool? requireBillingAddress, double? amount}) async {

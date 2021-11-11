@@ -184,7 +184,7 @@ public class StripeMapUtil {
         private static final String FIELD_ATTEMPTS_REMAINING = "attempts_remaining";
         private static final String FIELD_STATUS = "status";
 
-        public static Map<String, Object> toMap(SourceCodeVerification sourceCodeVerification) {
+        public static Map<String, Object> toMap(Source.CodeVerification sourceCodeVerification) {
             if (sourceCodeVerification == null) {
                 return null;
             }
@@ -210,7 +210,7 @@ public class StripeMapUtil {
         private static final String FIELD_VERIFIED_PHONE = VERIFIED + FIELD_PHONE;
 
         @NonNull
-        public static Map<String, Object> toMap(SourceOwner sourceOwner) {
+        public static Map<String, Object> toMap(Source.Owner sourceOwner) {
             final AbstractMap<String, Object> map = new HashMap<>();
             if (sourceOwner == null) {
                 return map;
@@ -265,7 +265,7 @@ public class StripeMapUtil {
         private static final String FIELD_AMOUNT_RETURNED = "amount_returned";
 
         @NonNull
-        public static Map<String, Object> toMap(SourceReceiver sourceReceiver) {
+        public static Map<String, Object> toMap(Source.Receiver sourceReceiver) {
             final HashMap<String, Object> map = new HashMap<>();
             if (sourceReceiver == null) {
                 return map;
@@ -288,7 +288,7 @@ public class StripeMapUtil {
         private static final String FIELD_URL = "url";
 
         @NonNull
-        public static Map<String, Object> toMap(SourceRedirect sourceRedirect) {
+        public static Map<String, Object> toMap(Source.Redirect sourceRedirect) {
             final AbstractMap<String, Object> map = new HashMap<>();
             if (sourceRedirect == null) {
                 return map;

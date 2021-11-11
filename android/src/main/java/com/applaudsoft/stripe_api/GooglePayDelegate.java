@@ -131,6 +131,7 @@ public class GooglePayDelegate implements PluginRegistry.ActivityResultListener 
 //                .addAllowedPaymentMethod(WalletConstants.PAYMENT_METHOD_TOKENIZED_CARD)
 //                .build();
         try {
+            final JSONObject tokenizationSpec = new GooglePayConfig(stripeApiKey).getTokenizationSpecification();
             final JSONObject cardPaymentMethod = new JSONObject()
                     .put("type", "CARD")
                     .put(
@@ -138,7 +139,8 @@ public class GooglePayDelegate implements PluginRegistry.ActivityResultListener 
                             new JSONObject()
                                     .put("allowedAuthMethods", allowedAuthMethodsJson())
                                     .put("allowedCardNetworks", allowedCardNetworksJson())
-                    );
+                    )
+                    .put("tokenizationSpecification", tokenizationSpec);
             final JSONObject request = new JSONObject()
                     .put("apiVersion", 2)
                     .put("apiVersionMinor", 0)
@@ -153,6 +155,7 @@ public class GooglePayDelegate implements PluginRegistry.ActivityResultListener 
                         Boolean res = taskRes.getResult(ApiException.class);
                         result.success(res == Boolean.TRUE);
                     } catch (Exception exception) {
+                        exception.printStackTrace();
                         result.error(exception.getMessage(), null, null);
                     }
                 }
@@ -310,8 +313,8 @@ public class GooglePayDelegate implements PluginRegistry.ActivityResultListener 
             paymentsClient = Wallet.getPaymentsClient(activity,
                     new Wallet.WalletOptions.Builder()
 //                        .setEnvironment(WalletConstants.ENVIRONMENT_TEST)
-//                        .setEnvironment(WalletConstants.ENVIRONMENT_PRODUCTION)
-                            .setEnvironment(BuildConfig.DEBUG ? WalletConstants.ENVIRONMENT_TEST : WalletConstants.ENVIRONMENT_PRODUCTION)
+                        .setEnvironment(WalletConstants.ENVIRONMENT_PRODUCTION)
+//                        .setEnvironment(BuildConfig.DEBUG ? WalletConstants.ENVIRONMENT_TEST : WalletConstants.ENVIRONMENT_PRODUCTION)
                             .build());
         }
         return paymentsClient;

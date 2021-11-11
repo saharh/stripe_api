@@ -7,7 +7,8 @@ import com.stripe.android.ApiResultCallback;
 import com.stripe.android.Stripe;
 import com.stripe.android.StripeError;
 import com.stripe.android.exception.InvalidRequestException;
-import com.stripe.android.model.Card;
+import com.stripe.android.model.Address;
+import com.stripe.android.model.CardParams;
 import com.stripe.android.model.Source;
 import com.stripe.android.model.SourceParams;
 import com.stripe.android.model.StripeMapUtil;
@@ -17,6 +18,7 @@ import org.json.JSONObject;
 
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 
 import androidx.annotation.NonNull;
 
@@ -27,7 +29,6 @@ import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
-import io.flutter.plugin.common.PluginRegistry.Registrar;
 
 /**
  * FlutterPlugin
@@ -87,6 +88,7 @@ public class StripeApiPlugin implements FlutterPlugin, MethodCallHandler, Activi
                 result.error("Stripe publishableKey cannot be empty", null, null);
                 return;
             }
+            assert publishableKey != null;
             gpayDelegate.setStripeApiKey(publishableKey);
             stripe = new Stripe(appContext, publishableKey);
             result.success(null);
@@ -106,20 +108,23 @@ public class StripeApiPlugin implements FlutterPlugin, MethodCallHandler, Activi
 //                    (String) cardMap.get("address_country"),
 //                    (String) cardMap.get("currency"),
 //                    null);
-            Card card = new Card.Builder(
-                    (String) cardMap.get("number"),
-                    (Integer) cardMap.get("exp_month"),
-                    (Integer) cardMap.get("exp_year"),
-                    (String) cardMap.get("cvc"))
-                    .name((String) cardMap.get("name"))
-                    .addressLine1((String) cardMap.get("address_line1"))
-                    .addressLine2((String) cardMap.get("address_line2"))
-                    .addressCity((String) cardMap.get("address_city"))
-                    .addressState((String) cardMap.get("address_state"))
-                    .addressZip((String) cardMap.get("address_zip"))
-                    .addressCountry((String) cardMap.get("address_country"))
-                    .currency((String) cardMap.get("currency"))
-                    .build();
+            Address address = new Address(
+                    (String) cardMap.get("address_city"),
+                    (String) cardMap.get("address_country"),
+                    (String) cardMap.get("address_line1"),
+                    (String) cardMap.get("address_line2"),
+                    (String) cardMap.get("address_zip"),
+                    (String) cardMap.get("address_state")
+                    );
+            CardParams cardParams = new CardParams(
+                    (String) Objects.requireNonNull(cardMap.get("number")),
+                    (Integer) Objects.requireNonNull(cardMap.get("exp_month")),
+                    (Integer) Objects.requireNonNull(cardMap.get("exp_year")),
+                    (String) cardMap.get("cvc"),
+                    (String) cardMap.get("name"),
+                    address,
+                    (String) cardMap.get("currency")
+            );
             sourceCallback = new ApiResultCallback<Source>() {
                 public void onSuccess(@NonNull Source source) {
                     Map<String, Object> map = StripeMapUtil.SourceUtil.toMap(source);
@@ -140,7 +145,7 @@ public class StripeApiPlugin implements FlutterPlugin, MethodCallHandler, Activi
                 }
             };
 
-            stripe.createSource(SourceParams.createCardParams(card), sourceCallback);
+            stripe.createSource(SourceParams.createCardParams(cardParams), sourceCallback);
         } else if (call.method.equals("createSourceFromAliPay")) {
             sourceCallback = new ApiResultCallback<Source>() {
                 public void onSuccess(@NonNull Source source) {

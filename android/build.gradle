@@ -8,7 +8,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.0.2'
+        classpath 'com.android.tools.build:gradle:7.0.3'
     }
 }
 
@@ -22,10 +22,10 @@ rootProject.allprojects {
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 30
 
     defaultConfig {
-        minSdkVersion 19
+        minSdkVersion 21
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     lintOptions {
@@ -34,7 +34,7 @@ android {
 }
 
 dependencies {
-    implementation 'com.stripe:stripe-android:14.5.0'
+    implementation 'com.stripe:stripe-android:18.2.0'
 //    implementation 'com.stripe:stripe-android:16.4.3' // minsdk = 21 (currently 19), loses ~%1 of new paying users
     implementation 'com.google.android.gms:play-services-wallet:18.1.3'
 }
