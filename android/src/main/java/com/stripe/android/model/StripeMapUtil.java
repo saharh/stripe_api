@@ -100,7 +100,7 @@ public class StripeMapUtil {
             map.put(FIELD_ADDRESS_STATE, card.getAddressState());
             map.put(FIELD_ADDRESS_ZIP, card.getAddressZip());
             map.put(FIELD_ADDRESS_ZIP_CHECK, card.getAddressZipCheck());
-            map.put(FIELD_BRAND, card.getBrand() != null ? card.getBrand().getDisplayName() : null);
+            map.put(FIELD_BRAND, card.getBrand().getDisplayName());
             map.put(FIELD_CURRENCY, card.getCurrency());
             map.put(FIELD_COUNTRY, card.getCountry());
             map.put(FIELD_CUSTOMER, card.getCustomerId());
@@ -155,7 +155,7 @@ public class StripeMapUtil {
             map.put(FIELD_CREATED, source.getCreated());
             map.put(FIELD_CURRENCY, source.getCurrency());
             if (source.getFlow() != null) {
-                map.put(FIELD_FLOW, source.getFlow().toString());
+                map.put(FIELD_FLOW, source.getFlow().name());
             }
             map.put(FIELD_LIVEMODE, source.isLiveMode());
 //            map.put(FIELD_METADATA, source.getMetaData());
@@ -175,11 +175,11 @@ public class StripeMapUtil {
             map.put(source.getTypeRaw(), source.getSourceTypeData());
 
             if (source.getStatus() != null) {
-                map.put(FIELD_STATUS, source.getStatus().toString());
+                map.put(FIELD_STATUS, source.getStatus().name());
             }
             map.put(FIELD_TYPE, source.getTypeRaw());
             if (source.getUsage() != null) {
-                map.put(FIELD_USAGE, source.getUsage().toString());
+                map.put(FIELD_USAGE, source.getUsage().name());
             }
             removeNullAndEmptyParams(map);
             return map;
@@ -197,7 +197,7 @@ public class StripeMapUtil {
             final Map<String, Object> map = new HashMap<>();
             map.put(FIELD_ATTEMPTS_REMAINING, sourceCodeVerification.getAttemptsRemaining());
             if (sourceCodeVerification.getStatus() != null) {
-                map.put(FIELD_STATUS, sourceCodeVerification.getStatus());
+                map.put(FIELD_STATUS, sourceCodeVerification.getStatus().name());
             }
             return map;
         }
@@ -300,7 +300,9 @@ public class StripeMapUtil {
                 return map;
             }
             map.put(FIELD_RETURN_URL, sourceRedirect.getReturnUrl());
-            map.put(FIELD_STATUS, sourceRedirect.getStatus());
+            if (sourceRedirect.getStatus() != null) {
+                map.put(FIELD_STATUS, sourceRedirect.getStatus().name());
+            }
             map.put(FIELD_URL, sourceRedirect.getUrl());
             removeNullAndEmptyParams(map);
             return map;

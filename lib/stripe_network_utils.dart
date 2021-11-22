@@ -6,7 +6,7 @@
 void removeNullAndEmptyParams(Map<dynamic, dynamic> mapToEdit) {
 // Remove all null values; they cause validation errors
   final keys = mapToEdit.keys.toList(growable: false);
-  for (String key in keys as Iterable<String>) {
+  for (Object? key in keys as Iterable<Object>) {
     final value = mapToEdit[key];
     if (value == null) {
       mapToEdit.remove(key);

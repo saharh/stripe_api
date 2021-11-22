@@ -245,7 +245,11 @@ class _MyAppState extends State<MyApp> {
   }
 
   void availabilityChecks() async {
-    bool gpAvail = await Stripe.instance.isGooglePayAvailable();
+    try {
+      bool gpAvail = await Stripe.instance.isGooglePayAvailable();
+    } catch (e) {
+      debugPrint("Error: $e");
+    }
   }
 }
 
