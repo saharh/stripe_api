@@ -5,8 +5,8 @@ import android.text.TextUtils;
 
 import com.stripe.android.ApiResultCallback;
 import com.stripe.android.Stripe;
-import com.stripe.android.StripeError;
-import com.stripe.android.exception.InvalidRequestException;
+import com.stripe.android.core.StripeError;
+import com.stripe.android.core.exception.InvalidRequestException;
 import com.stripe.android.model.Address;
 import com.stripe.android.model.CardParams;
 import com.stripe.android.model.Source;
