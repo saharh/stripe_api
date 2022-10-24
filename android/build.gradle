@@ -8,7 +8,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.2.2'
+        classpath 'com.android.tools.build:gradle:7.3.1'
     }
 }
 
@@ -34,7 +34,7 @@ android {
 }
 
 dependencies {
-    implementation 'com.stripe:stripe-android:20.11.0'
+    implementation 'com.stripe:stripe-android:20.15.1'
 //    implementation 'com.stripe:stripe-android:16.4.3' // minsdk = 21 (currently 19), loses ~%1 of new paying users
     implementation 'com.google.android.gms:play-services-wallet:19.1.0'
 }
