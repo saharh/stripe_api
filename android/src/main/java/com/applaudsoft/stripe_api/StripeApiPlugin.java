@@ -88,7 +88,6 @@ public class StripeApiPlugin implements FlutterPlugin, MethodCallHandler, Activi
                 result.error("Stripe publishableKey cannot be empty", null, null);
                 return;
             }
-            assert publishableKey != null;
             gpayDelegate.setStripeApiKey(publishableKey);
             stripe = new Stripe(appContext, publishableKey);
             result.success(null);
@@ -132,21 +131,25 @@ public class StripeApiPlugin implements FlutterPlugin, MethodCallHandler, Activi
                     try {
                         result.success(map);
                     } catch (Exception e) {
+                        String errorCodeDefault = e.getClass().toString();
                         String message = e.getMessage() != null ? e.getMessage() : e.toString();
-                        result.error(null, message, null);
+                        result.error(errorCodeDefault, message, null);
                     }
                 }
 
                 public void onError(@NonNull Exception error) {
+                    String errorCodeDefault = error.getClass().toString();
                     if (error instanceof InvalidRequestException) {
                         StripeError stripeError = ((InvalidRequestException) error).getStripeError();
                         if (stripeError != null) {
-                            result.error(stripeError.getCode(), stripeError.getMessage(), null);
+                            String code = stripeError.getCode();
+                            code = code != null ? code : errorCodeDefault;
+                            result.error(code, stripeError.getMessage(), null);
                             return;
                         }
                     }
                     String message = error.getMessage() != null ? error.getMessage() : error.toString();
-                    result.error(null, message, null);
+                    result.error(errorCodeDefault, message, null);
                 }
             };
 
@@ -159,14 +162,16 @@ public class StripeApiPlugin implements FlutterPlugin, MethodCallHandler, Activi
                     try {
                         result.success(map);
                     } catch (Exception e) {
+                        String errorCodeDefault = e.getClass().toString();
                         String message = e.getMessage() != null ? e.getMessage() : e.toString();
-                        result.error(null, message, null);
+                        result.error(errorCodeDefault, message, null);
                     }
                 }
 
                 public void onError(@NonNull Exception error) {
+                    String errorCodeDefault = error.getClass().toString();
                     String message = error.getMessage() != null ? error.getMessage() : error.toString();
-                    result.error(message, null, null);
+                    result.error(errorCodeDefault, message, null);
                 }
             };
 
