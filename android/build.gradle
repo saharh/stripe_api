@@ -31,6 +31,8 @@ android {
     lint {
         disable 'InvalidPackage'
     }
+
+    namespace 'com.applaudsoft.stripe_api'
 }
 
 dependencies {
